@@ -260,7 +260,7 @@ public:
     }
 
     Iterator end() noexcept {
-        return Iterator(last);
+        return Iterator(last->next);
     }
 
     ConstIterator cbegin() const noexcept {
@@ -268,7 +268,7 @@ public:
     }
 
     ConstIterator cend() const noexcept {
-        return ConstIterator(last);
+        return ConstIterator(last->next);
     }
 };
 
