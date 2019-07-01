@@ -91,7 +91,7 @@ public:
     private:
         Nodo* nodo;
 
-        Iterator(Nodo* const nodo = nullptr) noexcept
+        Iterator(Nodo* nodo = nullptr) noexcept
             : nodo(nodo) {}
 
         /*void destroy() const noexcept {

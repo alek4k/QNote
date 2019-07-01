@@ -10,19 +10,10 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       note(note),
       lista(new NoteListWidget(this))
 {
-
-    /*QVector<QString> vector;
-    vector << "alpha" << "beta" << "delta";
-    ListaNote test;
-    test.push_back(new SimpleNote("titolo1", "descrizione", vector));
-    test.push_back(new SimpleNote("aaaaah1", "ok ok ok!!!", vector));
-*/
-
-    //lista->addEntry(note.cbegin());
-    //lista->addEntry(++note.cbegin());
-
+    //carico tutte le note nella lista
     refreshList();
 
+    //connetto la lista delle note all'area di testo
     connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
         auto items = lista->selectedItems();
         if (items.length() != 1) {
@@ -35,7 +26,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
-
+    //connetto il campo di ricerca alla lista delle note
     connect(searchBar, &QLineEdit::textChanged, [this] () {
         QString lookingFor = searchBar->text();
         if (lookingFor.compare("") == 0) {
@@ -50,25 +41,43 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
+    //connetto l'area di testo alle note per salvare le modifiche
+    connect(textArea, &QPlainTextEdit::textChanged, [this] () {
+        auto items = lista->selectedItems();
+        if (items.length() != 1) {
+            return;
+        }
+        else {
+            //ListaNote::ConstIterator* it = const_cast<ListaNote::ConstIterator*>(static_cast<NoteListWidgetItem*>(items[0])->getNota());
+
+
+            //textArea->setPlainText(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione());
+            //noteDetailWidget->showNota(*static_cast<NoteListWidgetItem*>(items[0])->getNota());
+        }
+    });
+
+    //opzioni grafiche lista note
     //lista->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );
-    //lista->setStyleSheet("QListWidget::item:alternate{border-bottom: 3px solid green;} QListWidget{background-color: black;}");
     //lista->setAlternatingRowColors(true);
 
+    //qualche miglioria grafica per l'area di testo
     textArea->setStyleSheet("QPlainTextEdit { "
-                            "padding-left:20; "
-                            "padding-top:20; "
-                            "padding-bottom:20; "
-                            "padding-right:10; "
-                            "background-color: white}"
-                            );
+                               "padding-left:20; "
+                               "padding-top:20; "
+                               "padding-bottom:20; "
+                               "padding-right:10; "
+                               "background-color: white}"
+                               );
 
     //QTextEdit* textEdit = new QTextEdit;
     //QString imagePath = QApplication::applicationDirPath() + "/logo.png";
     //QString html = QString("<img src='bella.jpg'>");
     //textEdit->setHtml(html);
 
+    //settings campo di ricerca
     searchBar->setPlaceholderText("Tutte le note...");
 
+    //carico componenti nella grid-layout
     layout->addWidget(searchBar, 1, 1);
     layout->addWidget(lista, 2, 1);
     layout->addWidget(textArea, 1, 2, 2, 1);
@@ -76,15 +85,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     layout->setColumnStretch(1, 10);
     layout->setColumnStretch(2, 20);
 
-    //TEST RICERCA
-    //ListaNote::ConstIterator* it = new ListaNote::ConstIterator(note.cbegin());
-    RicercaTesto searchQ (QString("ok"));
-    Container<const ListaNote::ConstIterator> gh = note.search(searchQ);
-    /*for (auto it = gh.cbegin(); it != gh.cend(); ++it) {
-        QString temp = "dd";
-    }*/
 
-    QString fsdfds = "";
 }
 
 void NoteWidget::refreshList() {

@@ -17,5 +17,6 @@ bool RicercaTesto::operator() (const Nota& elemento) const {
 }
 
 Container<const ListaNote::ConstIterator> RicercaTesto::getResults(Container<const ListaNote::ConstIterator> &risultatiDisordinati) const {
+
     return risultatiDisordinati;
 }
