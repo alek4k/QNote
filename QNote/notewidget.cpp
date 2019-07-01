@@ -48,7 +48,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             return;
         }
         else {
-            //ListaNote::ConstIterator* it = const_cast<ListaNote::ConstIterator*>(static_cast<NoteListWidgetItem*>(items[0])->getNota());
+            //ListaNote::ConstIterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
 
 
             //textArea->setPlainText(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione());
