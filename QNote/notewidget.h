@@ -18,6 +18,7 @@ public:
     virtual ~NoteWidget() = default;
 
 protected slots:
+    void refreshList();
 
 private:
     QPlainTextEdit * textArea;

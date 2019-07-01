@@ -17,9 +17,11 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     test.push_back(new SimpleNote("titolo1", "descrizione", vector));
     test.push_back(new SimpleNote("aaaaah1", "ok ok ok!!!", vector));
 */
-    lista->addEntry(note.cbegin());
-    lista->addEntry(++note.cbegin());
 
+    //lista->addEntry(note.cbegin());
+    //lista->addEntry(++note.cbegin());
+
+    refreshList();
 
     connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
         auto items = lista->selectedItems();
@@ -36,7 +38,10 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 
     connect(searchBar, &QLineEdit::textChanged, [this] () {
         QString lookingFor = searchBar->text();
-        if (lookingFor.compare("") == 0) return;
+        if (lookingFor.compare("") == 0) {
+            refreshList();
+            return;
+        }
 
         lista->clear();
         Container<const ListaNote::ConstIterator> queryResult = this->note.search(RicercaTesto(QString(lookingFor)));
@@ -80,4 +85,12 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     }*/
 
     QString fsdfds = "";
+}
+
+void NoteWidget::refreshList() {
+    lista->clear();
+
+    for (auto it = note.cbegin(); it != note.cend(); ++it) {
+        lista->addEntry(it);
+    }
 }

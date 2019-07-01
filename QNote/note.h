@@ -6,12 +6,12 @@
 
 typedef Container<Nota> ListaNote;
 
-/*class VisualizzazioneOrdinata : public ListaNote::Ricerca {
+class VisualizzazioneOrdinata : public ListaNote::Ricerca {
 public:
     virtual ~VisualizzazioneOrdinata() = default;
 
-    Container<ListaNote::Iterator> getResults(Container<ListaNote::Iterator>& risultatiDisordinati) const;
-};*/
+    Container<const ListaNote::ConstIterator> getResults(Container<const ListaNote::ConstIterator>& risultatiDisordinati) const;
+};
 
 class RicercaTesto : public ListaNote::Ricerca {
 public:

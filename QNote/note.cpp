@@ -1,10 +1,11 @@
 #include "note.h"
 
-/*Container<ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<ListaNote::Iterator>& risultatiDisordinati) const {
+//VisualizzazioneOrdinata
+Container<const ListaNote::ConstIterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::ConstIterator>& risultatiDisordinati) const {
     return risultatiDisordinati;
 }
-*/
 
+//RicercaTesto
 RicercaTesto::RicercaTesto(const QString& text) : text(text) {}
 
 bool RicercaTesto::operator() (const Nota& elemento) const {
