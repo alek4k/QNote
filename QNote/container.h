@@ -65,7 +65,6 @@ public:
         return risultatiInDisordine;
     }
 
-
     class Serializzazione {
     protected:
         virtual void operator() (const T& elemento) = 0;
@@ -230,7 +229,7 @@ public:
     }
 
     Iterator end() noexcept {
-        return nullptr;
+        return Iterator();
     }
 
     ConstIterator cbegin() const noexcept {
@@ -238,7 +237,7 @@ public:
     }
 
     ConstIterator cend() const noexcept {
-        return nullptr;
+        return ConstIterator();
     }
 };
 

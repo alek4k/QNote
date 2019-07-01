@@ -23,6 +23,7 @@ private:
     QPlainTextEdit * textArea;
     QLineEdit* const lineText;
     QGridLayout* const layout;
+    QLineEdit* const searchBar;
 
     ListaNote& note;
 

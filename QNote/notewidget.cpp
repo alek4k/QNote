@@ -6,6 +6,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       textArea(new QPlainTextEdit),
       lineText(new QLineEdit),
       layout(new QGridLayout(this)),
+      searchBar(new QLineEdit),
       note(note),
       lista(new NoteListWidget(this))
 {
@@ -16,8 +17,8 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     test.push_back(new SimpleNote("titolo1", "descrizione", vector));
     test.push_back(new SimpleNote("aaaaah1", "ok ok ok!!!", vector));
 */
-    lista->addEntry(note.begin());
-    lista->addEntry(++note.begin());
+    lista->addEntry(note.cbegin());
+    lista->addEntry(++note.cbegin());
 
 
     connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
@@ -29,6 +30,18 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         else {
             textArea->setPlainText(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione());
             //noteDetailWidget->showNota(*static_cast<NoteListWidgetItem*>(items[0])->getNota());
+        }
+    });
+
+
+    connect(searchBar, &QLineEdit::textChanged, [this] () {
+        QString lookingFor = searchBar->text();
+        if (lookingFor.compare("") == 0) return;
+
+        lista->clear();
+        Container<const ListaNote::ConstIterator> queryResult = this->note.search(RicercaTesto(QString(lookingFor)));
+        for (auto it = queryResult.cbegin(); it != queryResult.cend(); ++it) {
+            lista->addEntry(*it);
         }
     });
 
@@ -49,14 +62,14 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     //QString html = QString("<img src='bella.jpg'>");
     //textEdit->setHtml(html);
 
-    layout->addWidget(lista, 1, 1);
-    layout->addWidget(textArea, 1, 2);
+    searchBar->setPlaceholderText("Tutte le note...");
+
+    layout->addWidget(searchBar, 1, 1);
+    layout->addWidget(lista, 2, 1);
+    layout->addWidget(textArea, 1, 2, 2, 1);
     //layout->addWidget(textEdit, 2, 2);
     layout->setColumnStretch(1, 10);
     layout->setColumnStretch(2, 20);
-
-    layout->setMargin(0);
-    layout->setSpacing(0);
 
     //TEST RICERCA
     //ListaNote::ConstIterator* it = new ListaNote::ConstIterator(note.cbegin());
