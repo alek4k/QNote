@@ -17,10 +17,6 @@ public:
     ~SimpleNote() override = default;
 
     SimpleNote* clone() const noexcept override;
-
-    void read(const QJsonObject& json) const override;
-
-    void write(const QJsonObject& json) const override;
 };
 
 #endif // SIMPLENOTE_H

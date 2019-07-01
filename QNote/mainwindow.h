@@ -7,9 +7,10 @@
 #include "nota.h"
 #include "notelistwidget.h"
 #include "notedetailwidget.h"
+#include "notewidget.h"
 #include "note.h"
 
-class MainWindow : public QDialog
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -19,18 +20,14 @@ public:
 private:
     QIcon * const icon;
 
-    QMenuBar * const menuBar;
     QMenu * const fileMenu;
     QAction * const importa;
     QAction * const esporta;
     QAction * const quit;
 
-    QGroupBox * const gridGroupBox;
+    NoteWidget * mainWidget;
 
-    NoteListWidget * noteListWidget;
-    NoteDetailWidget * noteDetailWidget;
-
-    Note* list;
+    ListaNote list;
 private slots:
     /*void importNote();
     void exportNote();*/

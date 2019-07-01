@@ -32,6 +32,7 @@ SOURCES += \
         note.cpp \
         notedetailwidget.cpp \
         notelistwidget.cpp \
+        notewidget.cpp \
         simplenote.cpp \
         todoitem.cpp \
         todonote.cpp
@@ -44,6 +45,7 @@ HEADERS += \
         note.h \
         notedetailwidget.h \
         notelistwidget.h \
+        notewidget.h \
         simplenote.h \
         todoitem.h \
         todonote.h

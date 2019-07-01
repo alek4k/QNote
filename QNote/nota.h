@@ -49,10 +49,6 @@ public:
     void setDataModifica(const QDateTime& dataModifica) noexcept;
 
     void setTag(const QVector<QString> tag);
-
-    virtual void read(const QJsonObject& json) const;
-
-    virtual void write(const QJsonObject& json) const;
 };
 
 #endif // NOTA_H

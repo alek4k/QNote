@@ -7,6 +7,8 @@ template <typename T>
 class Container {
 public:
     class Iterator;
+    class ConstIterator;
+    class Ricerca;
 private:
     class Nodo {
         T* info;
@@ -36,6 +38,54 @@ private:
 
     Nodo* first, *last;
 public:
+    class Ricerca {
+    public:
+        Ricerca() = default;
+
+        Ricerca(const Ricerca&) = delete;
+
+        // Implementa la ricerca (un risultato è presente? SI/NO)
+        virtual bool operator()(const T&) const { return true; }
+
+        // Implementa l'ordine dei risultati di ricerca
+        virtual Container<const ConstIterator> getResults(Container<const ConstIterator>& risultatiDisordinati) const {
+            return risultatiDisordinati;
+        }
+    };
+
+    Container<const ConstIterator> search(const Ricerca& cr) {
+        Container<const ConstIterator> risultatiInDisordine;
+        for (auto it = cbegin(); it != cend(); ++it) // ci sono elementi
+        {
+            if (cr(*it))
+                risultatiInDisordine.push_back(it);
+        }
+
+        return cr.getResults(risultatiInDisordine);
+    }
+
+
+    class Serializzazione {
+    protected:
+        virtual void operator() (const T& elemento) = 0;
+    };
+
+    class Deserializzazione {
+    protected:
+        virtual Container<T> operator()() = 0;
+    };
+
+    void serializza(const Ricerca& daSerializzare, const Serializzazione& cs) {
+        auto serializzandi = this->search(daSerializzare);
+
+        // scorro tutti i risultati in serializzandi e per ogni elemento "el" faccio;
+        //cs(el);
+    }
+
+    static Container<T> deserializza(const Deserializzazione& cd) {
+        cd();
+    }
+
     class Iterator {
         friend class Container;
     private:
@@ -44,7 +94,7 @@ public:
         Iterator(Nodo* const nodo = nullptr) noexcept
             : nodo(nodo) {}
 
-        void destroy() const noexcept {
+        /*void destroy() const noexcept {
             if (!nodo)
                 return;
             if (nodo->previous)
@@ -52,7 +102,7 @@ public:
             if (nodo->next)
                 nodo->next->previous = nodo->previous;
             delete nodo;
-        }
+        }*/
     public:
         Iterator(const Iterator& it) noexcept
             : nodo(it.nodo) {}
@@ -73,11 +123,11 @@ public:
         }
 
         bool operator == (const Iterator& it) const noexcept {
-            return nodo == (*it)->nodo;
+            return nodo == it.nodo;
         }
 
         bool operator != (const Iterator& it) const noexcept {
-            return nodo != (*it)->nodo;
+            return nodo != it.nodo;
         }
 
         T& operator * () const noexcept {
@@ -89,8 +139,51 @@ public:
         }
     };
 
+    class ConstIterator {
+        friend class Container;
+    private:
+        Nodo* nodo;
+
+        ConstIterator(Nodo* nodo = nullptr) noexcept
+            : nodo(nodo) {}
+    public:
+        ConstIterator(const ConstIterator& it) noexcept
+            : nodo(it.nodo) {}
+
+        virtual ~ConstIterator() = default;
+
+        ConstIterator& operator = (const ConstIterator& it) noexcept {
+            if (this != &it)
+                nodo = it.nodo;
+
+            return *this;
+        }
+
+        ConstIterator& operator ++() noexcept {
+            nodo = nodo->next;
+
+            return *this;
+        }
+
+        bool operator == (const ConstIterator& it) const noexcept {
+            return nodo == it.nodo;
+        }
+
+        bool operator != (const ConstIterator& it) const noexcept {
+            return nodo != it.nodo;
+        }
+
+        const T& operator * () const noexcept {
+            return *(nodo->info);
+        }
+
+        const T* operator->() const noexcept {
+            return nodo->info;
+        }
+    };
+
     Container() noexcept : first(nullptr), last(nullptr) {}
-    Container(const Container<T>&) noexcept = delete;
+    Container(const Container<T>&) noexcept = default;
 
     virtual ~Container() {
         while(first)
@@ -142,7 +235,13 @@ public:
             first = first->next;
         else if (it.nodo == last)
             last = last->previous;
-        it.destroy();
+
+        if (it.nodo->previous)
+            it.nodo->previous->next = it.nodo->next;
+        if (it.nodo->next)
+            it.nodo->next->previous = it.nodo->previous;
+        delete it.nodo;
+        //it.destroy();
     }
 
     //brasa tutto
@@ -157,6 +256,14 @@ public:
 
     Iterator end() noexcept {
         return Iterator(last);
+    }
+
+    ConstIterator cbegin() const noexcept {
+        return  ConstIterator(first);
+    }
+
+    ConstIterator cend() const noexcept {
+        return ConstIterator(last);
     }
 };
 

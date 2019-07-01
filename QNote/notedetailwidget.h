@@ -5,13 +5,12 @@
 #include "nota.h"
 #include "container.h"
 
-class NoteDetailWidget : public QTextEdit
+class NoteDetailWidget : public QWidget
 {
     Q_OBJECT
-
 private:
     Nota* nota;
-    QString* text;
+    QTextEdit* textArea;
 public:
     NoteDetailWidget(QWidget* parent = nullptr);
 

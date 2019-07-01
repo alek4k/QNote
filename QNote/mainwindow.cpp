@@ -5,58 +5,26 @@
 #include "nota.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QDialog(parent), icon(new QIcon("QNote.ico")),
-      menuBar(new QMenuBar),
-      fileMenu(new QMenu("File")),
-      importa(new QAction(this)), esporta(new QAction(this)),
-      quit(new QAction(this)),
-      gridGroupBox(new QGroupBox()),
-      list(new Note)
+    : QMainWindow(parent),
+      icon(new QIcon("QNote.ico")),
+      fileMenu(menuBar()->addMenu("&File")),
+      importa(new QAction(this)),
+      esporta(new QAction(this)),
+      quit(new QAction(this))
 {
     QVector<QString> vector;
     vector << "alpha" << "beta" << "delta";
-    //QList<SimpleNote>* list = new QList<SimpleNote>();
-    list->push_back(new SimpleNote("titolo", "descrizione", vector));
+    QVector<QString> vector2;
+    vector2 << "ok" << "beta";
+    list.push_back(new SimpleNote("titolo", "descrizione", vector2));
+    list.push_back(new SimpleNote("aaaaah", "ok ok ok!!!", vector));
+
+    mainWidget = new NoteWidget(list, this);
 
     // Impostazioni finestra
     setWindowIcon(*icon);
     setWindowTitle("QNote - Gestore di note");
-    //QHBoxLayout *body = new QHBoxLayout(this); // layout
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setMenuBar(menuBar);
     resize(800, 600);
-
-    //QVBoxLayout *left = new QVBoxLayout;
-    noteListWidget = new NoteListWidget(list);
-    //left->addWidget(noteListWidget);
-    //body->addLayout(left, 33);
-
-    noteListWidget->addEntry(list->begin());
-
-    noteDetailWidget = new NoteDetailWidget();
-    //auto items = noteListWidget->selectedItems();
-    noteDetailWidget->showNota(*(list->begin()));
-
-    //setCentralWidget(noteListWidget);
-    QTextEdit* textArea = new QTextEdit;
-    textArea->setText("Weeeeeee");
-
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(noteListWidget, 1, 1);
-    layout->addWidget(textArea, 1, 2);
-    layout->setColumnStretch(1, 10);
-    layout->setColumnStretch(2, 20);
-    //layout->setSpacing(0);
-    layout->setMargin(0);
-    gridGroupBox->setLayout(layout);
-
-    //mainLayout->setSpacing(0);
-    mainLayout->setMargin(0);
-    mainLayout->setContentsMargins(0,0,0,0);
-
-    mainLayout->addWidget(gridGroupBox);
-    setLayout(mainLayout);
 
     // File Menu
     importa->setText("Importa");
@@ -80,11 +48,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(quit, SIGNAL(triggered()), this, SLOT(exit()));
     fileMenu->addAction(quit);
 
-    menuBar->addMenu(fileMenu);
-    //
+    // Imposto il widget principale sulla finestra
+    setCentralWidget(mainWidget);
 }
 
 void MainWindow::exit() {
-    QApplication::quit();
+    QVector<QString> vector;
+    vector << "alpha" << "beta" << "delta";
+    list.push_back(new SimpleNote("kkfkdsk", "fdsf ok ok!!!", vector));
+    //mainWidget->lista->addEntry(list.end());
+    //QApplication::quit();
 }
 

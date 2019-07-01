@@ -3,9 +3,13 @@
 NoteDetailWidget::NoteDetailWidget(QWidget* parent)
     : nota(nullptr), textArea(new QTextEdit)
 {
-    QVBoxLayout *hl = new QVBoxLayout;
+    QWidget *w = new QWidget;
+    QHBoxLayout *hl = new QHBoxLayout;
 
     hl->addWidget(textArea);
+
+    w->setLayout(hl);
+
 }
 
 
@@ -13,8 +17,7 @@ void NoteDetailWidget::showNota(Nota &nota) {
     clear();
     this->nota = &nota;
 
-    textArea = new QTextEdit();
-    textArea->setText(nota.getDescrizione());
+    textArea->setText(this->nota->getDescrizione());
 }
 
 void NoteDetailWidget::clear() {

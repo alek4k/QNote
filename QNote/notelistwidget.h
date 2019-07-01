@@ -4,25 +4,25 @@
 #include <QObject>
 #include <QtWidgets>
 #include "container.h"
-#include "nota.h"
+#include "note.h"
 
 class NoteListWidget : public QListWidget
 {
 private:
-    Container<Nota>* list;
+    ListaNote* list;
 public:
-    NoteListWidget(Container<Nota>* list, QWidget* parent = nullptr);
-    void addEntry(const Container<Nota>::Iterator& it, bool hidden = false);
+    NoteListWidget(QWidget* parent = nullptr);
+    void addEntry(const ListaNote::Iterator& it);
 };
 
 class NoteListWidgetItem : public QListWidgetItem
 {
 friend class NoteListWidget;
 private:
-    Container<Nota>::Iterator it;
-    NoteListWidgetItem(const Container<Nota>::Iterator& it);
+   ListaNote::Iterator it;
+    NoteListWidgetItem(const ListaNote::Iterator& it);
 public:
-    Container<Nota>::Iterator getNota() const;
+    ListaNote::Iterator getNota() const;
 };
 
 #endif // NOTELISTWIDGET_H
