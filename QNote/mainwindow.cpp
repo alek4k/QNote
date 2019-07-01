@@ -16,8 +16,8 @@ MainWindow::MainWindow(QWidget *parent)
     vector << "alpha" << "beta" << "delta";
     QVector<QString> vector2;
     vector2 << "ok" << "beta";
-    list.push_back(new SimpleNote("titolo", "descrizione", vector2));
-    list.push_back(new SimpleNote("aaaaah", "ok ok ok!!!", vector));
+    list.push_back(new SimpleNote("titolo", "descrizione", vector));
+    list.push_back(new SimpleNote("aaaaah", "ok ok ok!!!", vector2));
 
     mainWidget = new NoteWidget(list, this);
 

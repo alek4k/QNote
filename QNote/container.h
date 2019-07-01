@@ -61,7 +61,8 @@ public:
                 risultatiInDisordine.push_back(it);
         }
 
-        return cr.getResults(risultatiInDisordine);
+        //return cr.getResults(risultatiInDisordine);
+        return risultatiInDisordine;
     }
 
 
@@ -180,6 +181,10 @@ public:
         const T* operator->() const noexcept {
             return nodo->info;
         }
+
+        operator bool() const {
+            return nodo;
+        }
     };
 
     Container() noexcept : first(nullptr), last(nullptr) {}
@@ -259,7 +264,7 @@ public:
     }
 
     ConstIterator cbegin() const noexcept {
-        return  ConstIterator(first);
+        return ConstIterator(first);
     }
 
     ConstIterator cend() const noexcept {

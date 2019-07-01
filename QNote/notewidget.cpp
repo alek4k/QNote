@@ -60,6 +60,11 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 
     //TEST RICERCA
     //ListaNote::ConstIterator* it = new ListaNote::ConstIterator(note.cbegin());
-    RicercaTesto searchQ (QString("ok"));
+    RicercaTesto searchQ (QString("beta"));
     Container<const ListaNote::ConstIterator> gh = note.search(searchQ);
+    /*for (auto it = gh.cbegin(); it != gh.cend(); ++it) {
+        QString temp = "dd";
+    }*/
+
+    QString fsdfds = "";
 }
