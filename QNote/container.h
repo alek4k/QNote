@@ -36,7 +36,7 @@ private:
         friend class Iterator;
     };
 
-    Nodo* first, *last;
+    Nodo* first;
 public:
     class Ricerca {
     public:
@@ -58,7 +58,7 @@ public:
         for (auto it = cbegin(); it != cend(); ++it) // ci sono elementi
         {
             if (cr(*it))
-                risultatiInDisordine.push_back(it);
+                risultatiInDisordine.push_front(it);
         }
 
         //return cr.getResults(risultatiInDisordine);
@@ -187,7 +187,7 @@ public:
         }
     };
 
-    Container() noexcept : first(nullptr), last(nullptr) {}
+    Container() noexcept : first(nullptr) {}
     Container(const Container<T>&) noexcept = default;
 
     virtual ~Container() {
@@ -205,41 +205,11 @@ public:
 
     void push_front(T* item) {
         first = new Nodo(item, nullptr, first);
-        if (!last)
-            last = first;
-    }
-
-    void push_back(const T& item) noexcept {
-        push_back(new T(item));
-    }
-
-    void push_back(T* item) {
-        last = new Nodo(item, last);
-        if (!first)
-            first = last;
-    }
-
-    void move_front(const Iterator& it) noexcept {
-        if (!it.nodo || it == begin()) return;
-
-        it.nodo->previous->next = it.nodo->next;
-        if (it == end()) {
-            last = it.nodo->previous;
-        }
-        else {
-            it.nodo->next->previous = it.nodo->previous;
-        }
-        first->previous = it.nodo;
-        it.nodo->next = first;
-        it.nodo->previous = nullptr;
-        first = it.nodo;
     }
 
     void remove(const Iterator& it) noexcept {
         if (it.nodo == first)
             first = first->next;
-        else if (it.nodo == last)
-            last = last->previous;
 
         if (it.nodo->previous)
             it.nodo->previous->next = it.nodo->next;
@@ -260,7 +230,7 @@ public:
     }
 
     Iterator end() noexcept {
-        return Iterator(last->next);
+        return nullptr;
     }
 
     ConstIterator cbegin() const noexcept {
@@ -268,7 +238,7 @@ public:
     }
 
     ConstIterator cend() const noexcept {
-        return ConstIterator(last->next);
+        return nullptr;
     }
 };
 

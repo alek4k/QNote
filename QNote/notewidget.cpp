@@ -17,7 +17,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     test.push_back(new SimpleNote("aaaaah1", "ok ok ok!!!", vector));
 */
     lista->addEntry(note.begin());
-    lista->addEntry(note.end());
+    lista->addEntry(++note.begin());
 
 
     connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
@@ -60,7 +60,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 
     //TEST RICERCA
     //ListaNote::ConstIterator* it = new ListaNote::ConstIterator(note.cbegin());
-    RicercaTesto searchQ (QString("beta"));
+    RicercaTesto searchQ (QString("ok"));
     Container<const ListaNote::ConstIterator> gh = note.search(searchQ);
     /*for (auto it = gh.cbegin(); it != gh.cend(); ++it) {
         QString temp = "dd";
