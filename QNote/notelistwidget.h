@@ -12,17 +12,17 @@ private:
     ListaNote* list;
 public:
     NoteListWidget(QWidget* parent = nullptr);
-    void addEntry(const ListaNote::ConstIterator& it);
+    void addEntry(const ListaNote::Iterator& it);
 };
 
 class NoteListWidgetItem : public QListWidgetItem
 {
 friend class NoteListWidget;
 private:
-   ListaNote::ConstIterator it;
-    NoteListWidgetItem(const ListaNote::ConstIterator& it);
+    ListaNote::Iterator it;
+    NoteListWidgetItem(const ListaNote::Iterator& it);
 public:
-    ListaNote::ConstIterator getNota() const;
+    const ListaNote::Iterator getNota() const;
 };
 
 #endif // NOTELISTWIDGET_H

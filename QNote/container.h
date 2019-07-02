@@ -51,11 +51,27 @@ public:
         virtual Container<const ConstIterator> getResults(Container<const ConstIterator>& risultatiDisordinati) const {
             return risultatiDisordinati;
         }
+
+        virtual Container<const Iterator> getResults(Container<const Iterator>& risultatiDisordinati) const {
+            return risultatiDisordinati;
+        }
     };
 
     Container<const ConstIterator> search(const Ricerca& cr) {
         Container<const ConstIterator> risultatiInDisordine;
         for (auto it = cbegin(); it != cend(); ++it) // ci sono elementi
+        {
+            if (cr(*it))
+                risultatiInDisordine.push_front(it);
+        }
+
+        //return cr.getResults(risultatiInDisordine);
+        return risultatiInDisordine;
+    }
+
+    Container<const Iterator> simpleSearch(const Ricerca& cr) {
+        Container<const Iterator> risultatiInDisordine;
+        for (auto it = begin(); it != end(); ++it) // ci sono elementi
         {
             if (cr(*it))
                 risultatiInDisordine.push_front(it);

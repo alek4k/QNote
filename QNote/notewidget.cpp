@@ -7,6 +7,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       lineText(new QLineEdit),
       layout(new QGridLayout(this)),
       searchBar(new QLineEdit),
+      image(new QPixmap("logo.png")),
       note(note),
       lista(new NoteListWidget(this))
 {
@@ -35,8 +36,8 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
 
         lista->clear();
-        Container<const ListaNote::ConstIterator> queryResult = this->note.search(RicercaTesto(QString(lookingFor)));
-        for (auto it = queryResult.cbegin(); it != queryResult.cend(); ++it) {
+        Container<const ListaNote::Iterator> queryResult = this->note.simpleSearch(RicercaTesto(QString(lookingFor)));
+        for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
             lista->addEntry(*it);
         }
     });
@@ -48,11 +49,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             return;
         }
         else {
-            //ListaNote::ConstIterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
-
-
-            //textArea->setPlainText(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione());
-            //noteDetailWidget->showNota(*static_cast<NoteListWidgetItem*>(items[0])->getNota());
+            static_cast<NoteListWidgetItem*>(items[0])->getNota()->setDescrizione(textArea->toPlainText());
         }
     });
 
@@ -73,14 +70,27 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     //QString imagePath = QApplication::applicationDirPath() + "/logo.png";
     //QString html = QString("<img src='bella.jpg'>");
     //textEdit->setHtml(html);
+    QLabel* imageLabel = new QLabel;
+    QPixmap pix = QPixmap::fromImage(QImage("bella.jpg"));
+    //pix = pix.scaled( QSize(100,100) );
+    //imageLabel->setPixmap(pix);
+    int w = 400;
+    int h = 300;
+    // set a scaled pixmap to a w x h window keeping its aspect ratio
+    imageLabel->setPixmap(pix.scaled(w,h,Qt::KeepAspectRatio));
+
 
     //settings campo di ricerca
     searchBar->setPlaceholderText("Tutte le note...");
 
+
     //carico componenti nella grid-layout
     layout->addWidget(searchBar, 1, 1);
     layout->addWidget(lista, 2, 1);
-    layout->addWidget(textArea, 1, 2, 2, 1);
+    //layout->addWidget(textArea, 1, 2, 2, 1);
+    layout->addWidget(textArea, 2, 2);
+    layout->addWidget(imageLabel, 1, 2);
+
     //layout->addWidget(textEdit, 2, 2);
     layout->setColumnStretch(1, 10);
     layout->setColumnStretch(2, 20);
@@ -91,7 +101,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 void NoteWidget::refreshList() {
     lista->clear();
 
-    for (auto it = note.cbegin(); it != note.cend(); ++it) {
+    for (auto it = note.begin(); it != note.end(); ++it) {
         lista->addEntry(it);
     }
 }

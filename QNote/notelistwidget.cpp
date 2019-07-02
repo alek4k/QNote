@@ -6,15 +6,15 @@ NoteListWidget::NoteListWidget(QWidget* parent)
     setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
-NoteListWidgetItem::NoteListWidgetItem(const Container<Nota>::ConstIterator& it)
+NoteListWidgetItem::NoteListWidgetItem(const Container<Nota>::Iterator& it)
     : QListWidgetItem(), it(it) {}
 
 
-Container<Nota>::ConstIterator NoteListWidgetItem::getNota() const {
+const Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
     return it;
 }
 
-void NoteListWidget::addEntry(const Container<Nota>::ConstIterator& it) {
+void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
     QWidget *w = new QWidget;
     QVBoxLayout *hl = new QVBoxLayout;
 

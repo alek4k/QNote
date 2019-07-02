@@ -5,6 +5,10 @@ Container<const ListaNote::ConstIterator> VisualizzazioneOrdinata::getResults(Co
     return risultatiDisordinati;
 }
 
+Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
+    return risultatiDisordinati;
+}
+
 //RicercaTesto
 RicercaTesto::RicercaTesto(const QString& text) : text(text) {}
 
@@ -17,6 +21,9 @@ bool RicercaTesto::operator() (const Nota& elemento) const {
 }
 
 Container<const ListaNote::ConstIterator> RicercaTesto::getResults(Container<const ListaNote::ConstIterator> &risultatiDisordinati) const {
+    return risultatiDisordinati;
+}
 
+Container<const ListaNote::Iterator> RicercaTesto::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
     return risultatiDisordinati;
 }

@@ -7,6 +7,7 @@
 #include <QListView>
 #include <QListWidget>
 #include <QLineEdit>
+#include <QImage>
 #include "notelistwidget.h"
 #include "note.h"
 
@@ -25,6 +26,7 @@ private:
     QLineEdit* const lineText;
     QGridLayout* const layout;
     QLineEdit* const searchBar;
+    QPixmap* const image;
 
     ListaNote& note;
 
