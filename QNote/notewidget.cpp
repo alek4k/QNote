@@ -1,31 +1,22 @@
 #include "notewidget.h"
 #include "simplenote.h"
+#include "imgnote.h"
+#include "todonote.h"
 
 NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     : QWidget(parent),
       textArea(new QPlainTextEdit),
-      lineText(new QLineEdit),
       layout(new QGridLayout(this)),
       searchBar(new QLineEdit),
-      image(new QPixmap("logo.png")),
+      image(new QPixmap),
+      imageLabel(new QLabel),
+      colonnaSx(new QVBoxLayout(this)),
+      colonnaDx(new QVBoxLayout(this)),
       note(note),
       lista(new NoteListWidget(this))
 {
     //carico tutte le note nella lista
     refreshList();
-
-    //connetto la lista delle note all'area di testo
-    connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
-        auto items = lista->selectedItems();
-        if (items.length() != 1) {
-            textArea->clear();
-            textArea->setPlainText("");
-        }
-        else {
-            textArea->setPlainText(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione());
-            //noteDetailWidget->showNota(*static_cast<NoteListWidgetItem*>(items[0])->getNota());
-        }
-    });
 
     //connetto il campo di ricerca alla lista delle note
     connect(searchBar, &QLineEdit::textChanged, [this] () {
@@ -66,40 +57,75 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                                "background-color: white}"
                                );
 
-    //QTextEdit* textEdit = new QTextEdit;
-    //QString imagePath = QApplication::applicationDirPath() + "/logo.png";
-    //QString html = QString("<img src='bella.jpg'>");
-    //textEdit->setHtml(html);
-    QLabel* imageLabel = new QLabel;
-    QPixmap pix = QPixmap::fromImage(QImage("bella.jpg"));
-    //pix = pix.scaled( QSize(100,100) );
-    //imageLabel->setPixmap(pix);
-    int w = 400;
-    int h = 300;
+
+    image = new QPixmap(QPixmap::fromImage(QImage("cliors.jpg")));
+
     // set a scaled pixmap to a w x h window keeping its aspect ratio
-    imageLabel->setPixmap(pix.scaled(w,h,Qt::KeepAspectRatio));
+
+    imageLabel->setAlignment(Qt::AlignCenter);
 
 
     //settings campo di ricerca
     searchBar->setPlaceholderText("Tutte le note...");
 
 
+    colonnaSx->addWidget(searchBar);
+    colonnaSx->addWidget(lista);
+    layout->addLayout(colonnaSx, 0, 0);
+
+    //colonnaDx->addWidget(imageLabel);
+    colonnaDx->addWidget(textArea);
+    layout->addLayout(colonnaDx, 0, 1);
+
+/*
     //carico componenti nella grid-layout
-    layout->addWidget(searchBar, 1, 1);
-    layout->addWidget(lista, 2, 1);
-    //layout->addWidget(textArea, 1, 2, 2, 1);
-    layout->addWidget(textArea, 2, 2);
-    layout->addWidget(imageLabel, 1, 2);
-
+    layout->addWidget(searchBar, 0, 0);
+    layout->addWidget(lista, 1, 0);
+    //layout->addWidget(textArea, 0, 1, 1, 0);
+    layout->addWidget(textArea, 1, 1);
+    layout->addWidget(imageLabel, 0, 1);
+*/
     //layout->addWidget(textEdit, 2, 2);
-    layout->setColumnStretch(1, 10);
-    layout->setColumnStretch(2, 20);
+    layout->setColumnStretch(0, 10);
+    layout->setColumnStretch(1, 20);
 
+    //layout->addLayout(colonnaSx,0,0);
+
+
+    //connetto la lista delle note all'area di testo
+    connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
+        auto items = lista->selectedItems();
+        if (items.length() != 1) {
+            textArea->clear();
+            imageLabel->clear();
+            colonnaDx->removeWidget(imageLabel);
+        }
+        else {
+
+
+            Nota& t = *static_cast<NoteListWidgetItem*>(items[0])->getNota();
+
+            textArea->setPlainText(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione());
+
+            if (dynamic_cast<ImgNote*>(&t)) {
+                imageLabel->setPixmap((*image).scaled(400,400,Qt::KeepAspectRatio));
+                colonnaDx->removeWidget(textArea);
+                colonnaDx->addWidget(imageLabel);
+                colonnaDx->addWidget(textArea);
+            }
+            else {
+                imageLabel->clear();
+                colonnaDx->removeWidget(imageLabel);
+            }
+        }
+    });
 
 }
 
 void NoteWidget::refreshList() {
     lista->clear();
+    textArea->clear();
+    imageLabel->clear();
 
     for (auto it = note.begin(); it != note.end(); ++it) {
         lista->addEntry(it);

@@ -22,7 +22,7 @@ private:
     ListaNote::Iterator it;
     NoteListWidgetItem(const ListaNote::Iterator& it);
 public:
-    const ListaNote::Iterator getNota() const;
+    ListaNote::Iterator getNota() const;
 };
 
 #endif // NOTELISTWIDGET_H

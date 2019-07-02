@@ -10,7 +10,7 @@ NoteListWidgetItem::NoteListWidgetItem(const Container<Nota>::Iterator& it)
     : QListWidgetItem(), it(it) {}
 
 
-const Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
+Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
     return it;
 }
 

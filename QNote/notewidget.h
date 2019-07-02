@@ -22,11 +22,15 @@ protected slots:
     void refreshList();
 
 private:
-    QPlainTextEdit * textArea;
-    QLineEdit* const lineText;
+    QPlainTextEdit* const textArea;
     QGridLayout* const layout;
     QLineEdit* const searchBar;
-    QPixmap* const image;
+    QPixmap* image;
+    QLabel* const imageLabel;
+    QVBoxLayout* const colonnaSx;
+    QVBoxLayout* const colonnaDx;
+
+    Nota* selected;
 
     ListaNote& note;
 

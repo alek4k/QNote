@@ -3,6 +3,8 @@
 #include <QtWidgets>
 #include "simplenote.h"
 #include "nota.h"
+#include "todonote.h"
+#include "imgnote.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -18,13 +20,15 @@ MainWindow::MainWindow(QWidget *parent)
     vector2 << "ok" << "beta";
     list.push_front(new SimpleNote("titolo", "descrizione", vector));
     list.push_front(new SimpleNote("aaaaah", "ok ok ok!!!", vector2));
+    list.push_front(new ImgNote("immagine", "questa è una nota con immagine", vector, ""));
+    list.push_front(new ToDoNote("todo", "to do list nota", vector2, QList<ToDoItem>()));
 
     mainWidget = new NoteWidget(list, this);
 
     // Impostazioni finestra
     setWindowIcon(*icon);
     setWindowTitle("QNote - Gestore di note");
-    resize(800, 600);
+    resize(900, 650);
 
     // File Menu
     importa->setText("Importa");
