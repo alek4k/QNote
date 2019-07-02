@@ -57,7 +57,6 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                                "background-color: white}"
                                );
 
-
     image = new QPixmap(QPixmap::fromImage(QImage("cliors.jpg")));
 
     // set a scaled pixmap to a w x h window keeping its aspect ratio
@@ -96,13 +95,10 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
         auto items = lista->selectedItems();
         if (items.length() != 1) {
-            textArea->clear();
             imageLabel->clear();
             colonnaDx->removeWidget(imageLabel);
         }
         else {
-
-
             Nota& t = *static_cast<NoteListWidgetItem*>(items[0])->getNota();
 
             textArea->setPlainText(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione());
@@ -112,10 +108,12 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                 colonnaDx->removeWidget(textArea);
                 colonnaDx->addWidget(imageLabel);
                 colonnaDx->addWidget(textArea);
+                imageLabel->setVisible(true);
             }
             else {
                 imageLabel->clear();
                 colonnaDx->removeWidget(imageLabel);
+                imageLabel->setVisible(false);
             }
         }
     });
