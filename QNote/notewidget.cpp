@@ -12,6 +12,13 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       imageLabel(new QLabel),
       colonnaSx(new QVBoxLayout(this)),
       colonnaDx(new QVBoxLayout(this)),
+      barraTopLeft(new QGridLayout(this)),
+      barraTopRight(new QGridLayout(this)),
+      addNotaButton(new QToolButton),
+      deleteNotaButton(new QToolButton),
+      addImgButton(new QToolButton),
+      addToDoListButton(new QToolButton),
+      addTagButton(new QToolButton),
       note(note),
       lista(new NoteListWidget(this))
 {
@@ -44,6 +51,10 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
+    connect(deleteNotaButton, &QToolButton::clicked, [this] () {
+        cancellaNota();
+    });
+
     //opzioni grafiche lista note
     //lista->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );
     //lista->setAlternatingRowColors(true);
@@ -57,7 +68,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                                "background-color: white}"
                                );
 
-    image = new QPixmap(QPixmap::fromImage(QImage("cliors.jpg")));
+    image = new QPixmap(QPixmap::fromImage(QImage("bella.jpg")));
 
     // set a scaled pixmap to a w x h window keeping its aspect ratio
 
@@ -66,13 +77,44 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 
     //settings campo di ricerca
     searchBar->setPlaceholderText("Tutte le note...");
+    searchBar->setToolTip("Cerca");
+
+    addNotaButton->setIcon(QIcon("addNota.png"));
+    //addNotaButton->setIconSize(QSize(20, 20));
+    addNotaButton->setToolTip("Nuova nota");
 
 
-    colonnaSx->addWidget(searchBar);
+    addImgButton->setIcon(QIcon("addPicture.png"));
+    addImgButton->setToolTip("Aggiungi immagine");
+
+    deleteNotaButton->setIcon(QIcon("deleteNota.png"));
+    deleteNotaButton->setToolTip("Elimina nota");
+
+    addToDoListButton->setIcon(QIcon("addToDoList.png"));
+    addToDoListButton->setToolTip("Aggiungi lista di obiettivi");
+
+    addTagButton->setIcon(QIcon("tags2.png"));
+    addTagButton->setToolTip("Aggiungi tag");
+
+    barraTopLeft->addWidget(searchBar, 0, 0);
+    barraTopLeft->addWidget(addNotaButton, 0, 1);
+    barraTopLeft->setColumnStretch(0, 90);
+    barraTopLeft->setColumnStretch(1, 10);
+
+    barraTopRight->addWidget(addTagButton, 0, 0);
+    barraTopRight->addWidget(addImgButton, 0, 1);
+    barraTopRight->addWidget(addToDoListButton, 0, 2);
+    barraTopRight->addWidget(nullptr, 0, 3);
+    barraTopRight->addWidget(deleteNotaButton, 0, 4);
+    barraTopRight->setAlignment(Qt::AlignRight);
+    barraTopRight->setColumnMinimumWidth(3, 35);
+
+    colonnaSx->addLayout(barraTopLeft);
     colonnaSx->addWidget(lista);
     layout->addLayout(colonnaSx, 0, 0);
 
     //colonnaDx->addWidget(imageLabel);
+    colonnaDx->addLayout(barraTopRight);
     colonnaDx->addWidget(textArea);
     layout->addLayout(colonnaDx, 0, 1);
 
@@ -128,4 +170,16 @@ void NoteWidget::refreshList() {
     for (auto it = note.begin(); it != note.end(); ++it) {
         lista->addEntry(it);
     }
+}
+
+void NoteWidget::cancellaNota() {
+  QMessageBox::StandardButton reply;
+  reply = QMessageBox::question(this, "Test", "Cancellare la nota selezionata?",
+                                QMessageBox::Yes|QMessageBox::No);
+  if (reply == QMessageBox::Yes) {
+    qDebug() << "Yes was clicked";
+    QApplication::quit();
+  } else {
+    qDebug() << "Yes was *not* clicked";
+  }
 }

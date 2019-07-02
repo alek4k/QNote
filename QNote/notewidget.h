@@ -8,6 +8,7 @@
 #include <QListWidget>
 #include <QLineEdit>
 #include <QImage>
+#include <QMessageBox>
 #include "notelistwidget.h"
 #include "note.h"
 
@@ -20,7 +21,7 @@ public:
 
 protected slots:
     void refreshList();
-
+    void cancellaNota();
 private:
     QPlainTextEdit* const textArea;
     QGridLayout* const layout;
@@ -29,13 +30,17 @@ private:
     QLabel* const imageLabel;
     QVBoxLayout* const colonnaSx;
     QVBoxLayout* const colonnaDx;
-
-    Nota* selected;
+    QGridLayout* const barraTopLeft;
+    QGridLayout* const barraTopRight;
+    QToolButton* const addNotaButton;
+    QToolButton* const deleteNotaButton;
+    QToolButton* const addImgButton;
+    QToolButton* const addToDoListButton;
+    QToolButton* const addTagButton;
 
     ListaNote& note;
 
     NoteListWidget* lista;
-
 
 };
 
