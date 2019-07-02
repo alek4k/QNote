@@ -57,10 +57,6 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::exit() {
-    QVector<QString> vector;
-    vector << "alpha" << "beta" << "delta";
-    list.push_front(new SimpleNote("kkfkdsk", "fdsf ok ok!!!", vector));
-    //mainWidget->lista->addEntry(list.end());
-    //QApplication::quit();
+    QApplication::quit();
 }
 

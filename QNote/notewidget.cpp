@@ -177,9 +177,8 @@ void NoteWidget::cancellaNota() {
   reply = QMessageBox::question(this, "Test", "Cancellare la nota selezionata?",
                                 QMessageBox::Yes|QMessageBox::No);
   if (reply == QMessageBox::Yes) {
-    qDebug() << "Yes was clicked";
-    QApplication::quit();
+
   } else {
-    qDebug() << "Yes was *not* clicked";
+
   }
 }
