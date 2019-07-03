@@ -21,7 +21,7 @@ public:
 
 protected slots:
     void refreshList();
-    void cancellaNota();
+    void cancellaNota(ListaNote::Iterator&);
 private:
     QPlainTextEdit* const textArea;
     QGridLayout* const layout;

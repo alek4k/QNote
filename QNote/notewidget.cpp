@@ -22,8 +22,10 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       note(note),
       lista(new NoteListWidget(this))
 {
-    //carico tutte le note nella lista
-    refreshList();
+
+
+    deleteNotaButton->setVisible(false);
+    textArea->setReadOnly(true);
 
     //connetto il campo di ricerca alla lista delle note
     connect(searchBar, &QLineEdit::textChanged, [this] () {
@@ -52,7 +54,11 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     });
 
     connect(deleteNotaButton, &QToolButton::clicked, [this] () {
-        cancellaNota();
+        auto items = lista->selectedItems();
+        if (items.length() == 1) {
+            ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+            cancellaNota(it);
+        }
     });
 
     //opzioni grafiche lista note
@@ -139,6 +145,9 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         if (items.length() != 1) {
             imageLabel->clear();
             colonnaDx->removeWidget(imageLabel);
+            textArea->clear();
+            deleteNotaButton->setVisible(false);
+            textArea->setReadOnly(true);
         }
         else {
             Nota& t = *static_cast<NoteListWidgetItem*>(items[0])->getNota();
@@ -157,9 +166,14 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                 colonnaDx->removeWidget(imageLabel);
                 imageLabel->setVisible(false);
             }
+
+            textArea->setReadOnly(false);
+            deleteNotaButton->setVisible(true);
         }
     });
 
+    //carico tutte le note nella lista
+    refreshList();
 }
 
 void NoteWidget::refreshList() {
@@ -170,15 +184,16 @@ void NoteWidget::refreshList() {
     for (auto it = note.begin(); it != note.end(); ++it) {
         lista->addEntry(it);
     }
+
+    lista->setCurrentRow(0);
 }
 
-void NoteWidget::cancellaNota() {
-  QMessageBox::StandardButton reply;
-  reply = QMessageBox::question(this, "Test", "Cancellare la nota selezionata?",
+void NoteWidget::cancellaNota(ListaNote::Iterator& it) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, (*it).getTitolo(), "Cancellare la nota selezionata?",
                                 QMessageBox::Yes|QMessageBox::No);
-  if (reply == QMessageBox::Yes) {
-
-  } else {
-
-  }
+    if (reply == QMessageBox::Yes) {
+            note.remove(it);
+            refreshList();
+    }
 }
