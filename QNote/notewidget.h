@@ -20,8 +20,9 @@ public:
     virtual ~NoteWidget() = default;
 
 protected slots:
-    void refreshList();
-    void cancellaNota(ListaNote::Iterator&);
+    void refreshList() const;
+    void cancellaNota(const ListaNote::Iterator&);
+    void addTag(const ListaNote::Iterator&);
 private:
     QPlainTextEdit* const textArea;
     QGridLayout* const layout;

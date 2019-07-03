@@ -69,6 +69,14 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         refreshList();
     });
 
+    connect(addTagButton, &QToolButton::clicked, [this] () {
+        auto items = lista->selectedItems();
+        if (items.length() == 1) {
+            ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+            addTag(it);
+        }
+    });
+
     //opzioni grafiche lista note
     //lista->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );
     //lista->setAlternatingRowColors(true);
@@ -200,7 +208,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     refreshList();
 }
 
-void NoteWidget::refreshList() {
+void NoteWidget::refreshList() const{
     lista->clear();
     textArea->clear();
     imageLabel->clear();
@@ -212,12 +220,35 @@ void NoteWidget::refreshList() {
     lista->setCurrentRow(0);
 }
 
-void NoteWidget::cancellaNota(ListaNote::Iterator& it) {
+void NoteWidget::cancellaNota(const ListaNote::Iterator& it) {
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, (*it).getTitolo(), "Cancellare la nota selezionata?",
+    reply = QMessageBox::warning(this, (*it).getTitolo(), "Cancellare la nota selezionata?",
                                 QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
             note.remove(it);
             refreshList();
     }
 }
+
+void NoteWidget::addTag(const ListaNote::Iterator& it) {
+    bool ok;
+    QString tag = QInputDialog::getText(this, "Nuovo tag",
+                                             "Descrizione tag:", QLineEdit::Normal,
+                                             "", &ok);
+    if (ok && !tag.isEmpty()) {
+        QVector<QString> t = (*it).getTag();
+        for (auto i = t.cbegin(); i != t.cend(); ++i) {
+            if ((*i).toLower().compare(tag.toLower()) == 0) {
+                QMessageBox::information (nullptr, "Attenzione", "Tag già presente nella nota");
+                return;
+            }
+        }
+
+        QVector<QString>* temp = new QVector<QString>(t);
+        temp->push_back(tag);
+        (*it).setTag(*temp);
+        delete temp;
+        refreshList();
+    }
+}
+
