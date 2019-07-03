@@ -23,11 +23,12 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       lista(new NoteListWidget(this))
 {
 
-
+    addToDoListButton->setVisible(false);
+    addImgButton->setVisible(false);
     deleteNotaButton->setVisible(false);
     textArea->setReadOnly(true);
 
-    //connetto il campo di ricerca alla lista delle note
+    //ACTION SCRITTURA TESTO SU CAMPO DI RICERCA
     connect(searchBar, &QLineEdit::textChanged, [this] () {
         QString lookingFor = searchBar->text();
         if (lookingFor.compare("") == 0) {
@@ -42,7 +43,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
-    //connetto l'area di testo alle note per salvare le modifiche
+    //SALVATAGGIO AUTOMATICO SCRITTURA DESCRIZIONE NOTA
     connect(textArea, &QPlainTextEdit::textChanged, [this] () {
         auto items = lista->selectedItems();
         if (items.length() != 1) {
@@ -53,6 +54,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
+    //PRESSIONE PULSANTE ELIMINAZIONE NOTA
     connect(deleteNotaButton, &QToolButton::clicked, [this] () {
         auto items = lista->selectedItems();
         if (items.length() == 1) {
@@ -139,7 +141,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     //layout->addLayout(colonnaSx,0,0);
 
 
-    //connetto la lista delle note all'area di testo
+    //CAMBIO SELEZIONE NOTA DALLA LISTA
     connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
         auto items = lista->selectedItems();
         if (items.length() != 1) {
@@ -148,6 +150,10 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             textArea->clear();
             deleteNotaButton->setVisible(false);
             textArea->setReadOnly(true);
+            addImgButton->setVisible(false);
+            addToDoListButton->setVisible(false);
+            addTagButton->setVisible(false);
+            deleteNotaButton->setVisible(false);
         }
         else {
             Nota& t = *static_cast<NoteListWidgetItem*>(items[0])->getNota();
@@ -160,6 +166,8 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                 colonnaDx->addWidget(imageLabel);
                 colonnaDx->addWidget(textArea);
                 imageLabel->setVisible(true);
+                addImgButton->setVisible(false);
+                addToDoListButton->setVisible(false);
             }
             else {
                 imageLabel->clear();
@@ -167,8 +175,18 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                 imageLabel->setVisible(false);
             }
 
+            if (dynamic_cast<ToDoNote*>(&t)) {
+                addToDoListButton->setVisible(false);
+            }
+
+            if (dynamic_cast<SimpleNote*>(&t)) {
+                addToDoListButton->setVisible(true);
+                addImgButton->setVisible(true);
+            }
+
             textArea->setReadOnly(false);
             deleteNotaButton->setVisible(true);
+            addTagButton->setVisible(true);
         }
     });
 
