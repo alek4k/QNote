@@ -2,7 +2,11 @@
 
 Nota::Nota(const QString& title, const QString& text, const QVector<QString>& tag) noexcept
     : titolo(title), descrizione(text), tag(tag)
-{ dataUltimaModifica = QDateTime::currentDateTime(); }
+{
+    dataUltimaModifica = QDateTime::currentDateTime();
+    //il titolo è la prima riga della descrizione
+    descrizione = (titolo.compare("") == 0) ? titolo : titolo + "\n" + descrizione;
+}
 
 QString Nota::getTitolo() const noexcept {
     return titolo;

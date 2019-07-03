@@ -82,6 +82,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         refreshList();
     });
 
+    //PRESSIONE PULSANTE AGGIUNTA TAG
     connect(addTagButton, &QToolButton::clicked, [this] () {
         auto items = lista->selectedItems();
         if (items.length() == 1) {
