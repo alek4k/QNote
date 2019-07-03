@@ -1,2 +1,2 @@
 # QNote
-Progetto C++ "Programmazione ad oggetti" 2018-2019 @UniPD
+Progetto C++ "Programmazione ad oggetti" 2018-2019
