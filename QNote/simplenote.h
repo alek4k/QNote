@@ -8,7 +8,7 @@
 class SimpleNote : public Nota
 {
 public:
-    SimpleNote(const QString&, const QString&, const QVector<QString>&) noexcept;
+    SimpleNote(const QString&, const QString& = "", const QVector<QString>& = QVector<QString>()) noexcept;
 
     SimpleNote(const SimpleNote&) noexcept;
 

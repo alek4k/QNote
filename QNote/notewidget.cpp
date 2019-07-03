@@ -63,6 +63,12 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
+    //PRESSIONE PULSANTE CREAZIONE NOTA
+    connect(addNotaButton, &QToolButton::clicked, [this] () {
+        this->note.push_front(new SimpleNote("Nuova nota..."));
+        refreshList();
+    });
+
     //opzioni grafiche lista note
     //lista->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );
     //lista->setAlternatingRowColors(true);
