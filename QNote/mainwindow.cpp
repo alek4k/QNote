@@ -18,10 +18,11 @@ MainWindow::MainWindow(QWidget *parent)
     vector << "alpha" << "beta" << "delta";
     QVector<QString> vector2;
     vector2 << "ok" << "beta";
-    list.push_front(new SimpleNote("titolo", "descrizione", vector));
-    list.push_front(new SimpleNote("aaaaah", "ok ok ok!!!", vector2));
-    list.push_front(new ImgNote("immagine", "questa è una nota con immagine", vector, ""));
-    list.push_front(new ToDoNote("todo", "to do list nota", vector2, QList<ToDoItem>()));
+    list.push_end(new SimpleNote("titolo", "descrizione", vector));
+    list.push_end(new SimpleNote("aaaaah", "ok ok ok!!!", vector2));
+    list.push_end(new ImgNote("immagine", "questa è una nota con immagine", vector, ""));
+    list.push_end(new ToDoNote("todo", "to do list nota", vector2, QList<ToDoItem>()));
+
 
     mainWidget = new NoteWidget(list, this);
 

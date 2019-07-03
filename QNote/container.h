@@ -222,9 +222,47 @@ public:
         first = new Nodo(item, nullptr, first);
     }
 
+    void push_end(const T& item) noexcept {
+        push_end(new T(item));
+    }
+
+    void push_end(T* item) {
+        if (!first) push_front(item);
+        else {
+            Nodo* temp = first;
+            while (temp->next)
+                temp = temp->next;
+
+            temp = new Nodo(item, temp, nullptr);
+        }
+    }
+
+    void insert(const Iterator& it, T* item) noexcept {
+        if (it.nodo == first) {
+            push_front(item);
+            return;
+        }
+
+        if (!it.nodo) {
+            push_end(item);
+            return;
+        }
+
+        Nodo* nuovo = new Nodo(item, it.nodo->previous, it.nodo);
+    }
+
     void remove(const Iterator& it) noexcept {
-        if (it.nodo == first)
+        //if (!it.nodo) return;
+
+        if (it.nodo == first) {
+            Nodo* temp = first;
             first = first->next;
+            if (first) {
+                first->previous = nullptr;
+            }
+            delete temp;
+            return;
+        }
 
         if (it.nodo->previous)
             it.nodo->previous->next = it.nodo->next;
