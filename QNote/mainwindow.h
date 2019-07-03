@@ -6,7 +6,6 @@
 #include "container.h"
 #include "nota.h"
 #include "notelistwidget.h"
-#include "notedetailwidget.h"
 #include "notewidget.h"
 #include "note.h"
 

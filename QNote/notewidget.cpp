@@ -50,9 +50,22 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             return;
         }
         else {
+            //la prima riga diventa il titolo della nota
+            QTextDocument *doc = (*textArea).document();
+            QTextBlock firstRow = doc->findBlockByLineNumber(0);
+            QString titolo = firstRow.text();
+            if (titolo.compare(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getTitolo()) != 0) {
+                static_cast<NoteListWidgetItem*>(items[0])->getNota()->setTitolo(titolo);
+                static_cast<NoteListWidgetItem*>(items[0])->setText(titolo);
+            }
+
+            //tutto diventa descrizione della nota
             static_cast<NoteListWidgetItem*>(items[0])->getNota()->setDescrizione(textArea->toPlainText());
         }
     });
+
+
+
 
     //PRESSIONE PULSANTE ELIMINAZIONE NOTA
     connect(deleteNotaButton, &QToolButton::clicked, [this] () {

@@ -57,27 +57,23 @@ SOURCES       = ../QNote/imgnote.cpp \
 		../QNote/mainwindow.cpp \
 		../QNote/nota.cpp \
 		../QNote/note.cpp \
-		../QNote/notedetailwidget.cpp \
 		../QNote/notelistwidget.cpp \
 		../QNote/notewidget.cpp \
 		../QNote/simplenote.cpp \
 		../QNote/todoitem.cpp \
 		../QNote/todonote.cpp moc_mainwindow.cpp \
-		moc_notedetailwidget.cpp \
 		moc_notewidget.cpp
 OBJECTS       = imgnote.o \
 		main.o \
 		mainwindow.o \
 		nota.o \
 		note.o \
-		notedetailwidget.o \
 		notelistwidget.o \
 		notewidget.o \
 		simplenote.o \
 		todoitem.o \
 		todonote.o \
 		moc_mainwindow.o \
-		moc_notedetailwidget.o \
 		moc_notewidget.o
 DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/common/unix.conf \
@@ -299,7 +295,6 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		../QNote/mainwindow.h \
 		../QNote/nota.h \
 		../QNote/note.h \
-		../QNote/notedetailwidget.h \
 		../QNote/notelistwidget.h \
 		../QNote/notewidget.h \
 		../QNote/simplenote.h \
@@ -309,7 +304,6 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		../QNote/mainwindow.cpp \
 		../QNote/nota.cpp \
 		../QNote/note.cpp \
-		../QNote/notedetailwidget.cpp \
 		../QNote/notelistwidget.cpp \
 		../QNote/notewidget.cpp \
 		../QNote/simplenote.cpp \
@@ -780,8 +774,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../QNote/container.h ../QNote/imgnote.h ../QNote/mainwindow.h ../QNote/nota.h ../QNote/note.h ../QNote/notedetailwidget.h ../QNote/notelistwidget.h ../QNote/notewidget.h ../QNote/simplenote.h ../QNote/todoitem.h ../QNote/todonote.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../QNote/imgnote.cpp ../QNote/main.cpp ../QNote/mainwindow.cpp ../QNote/nota.cpp ../QNote/note.cpp ../QNote/notedetailwidget.cpp ../QNote/notelistwidget.cpp ../QNote/notewidget.cpp ../QNote/simplenote.cpp ../QNote/todoitem.cpp ../QNote/todonote.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../QNote/container.h ../QNote/imgnote.h ../QNote/mainwindow.h ../QNote/nota.h ../QNote/note.h ../QNote/notelistwidget.h ../QNote/notewidget.h ../QNote/simplenote.h ../QNote/todoitem.h ../QNote/todonote.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../QNote/imgnote.cpp ../QNote/main.cpp ../QNote/mainwindow.cpp ../QNote/nota.cpp ../QNote/note.cpp ../QNote/notelistwidget.cpp ../QNote/notewidget.cpp ../QNote/simplenote.cpp ../QNote/todoitem.cpp ../QNote/todonote.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -813,26 +807,18 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/qt/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h /usr/lib/qt/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_notedetailwidget.cpp moc_notewidget.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_notewidget.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_notedetailwidget.cpp moc_notewidget.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_notewidget.cpp
 moc_mainwindow.cpp: ../QNote/mainwindow.h \
 		../QNote/container.h \
 		../QNote/nota.h \
 		../QNote/notelistwidget.h \
 		../QNote/note.h \
-		../QNote/notedetailwidget.h \
 		../QNote/notewidget.h \
 		moc_predefs.h \
 		/usr/bin/moc
 	/usr/bin/moc $(DEFINES) --include /home/alessandro/Scrivania/QNote/build-QNote-Desktop-Debug/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/alessandro/Scrivania/QNote/QNote -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I. -I/usr/include/c++/8.3.0 -I/usr/include/c++/8.3.0/x86_64-pc-linux-gnu -I/usr/include/c++/8.3.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed -I/usr/include ../QNote/mainwindow.h -o moc_mainwindow.cpp
-
-moc_notedetailwidget.cpp: ../QNote/notedetailwidget.h \
-		../QNote/nota.h \
-		../QNote/container.h \
-		moc_predefs.h \
-		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/alessandro/Scrivania/QNote/build-QNote-Desktop-Debug/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/alessandro/Scrivania/QNote/QNote -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I. -I/usr/include/c++/8.3.0 -I/usr/include/c++/8.3.0/x86_64-pc-linux-gnu -I/usr/include/c++/8.3.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed -I/usr/include ../QNote/notedetailwidget.h -o moc_notedetailwidget.cpp
 
 moc_notewidget.cpp: ../QNote/notewidget.h \
 		../QNote/notelistwidget.h \
@@ -868,7 +854,6 @@ main.o: ../QNote/main.cpp ../QNote/mainwindow.h \
 		../QNote/nota.h \
 		../QNote/notelistwidget.h \
 		../QNote/note.h \
-		../QNote/notedetailwidget.h \
 		../QNote/notewidget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../QNote/main.cpp
 
@@ -877,7 +862,6 @@ mainwindow.o: ../QNote/mainwindow.cpp ../QNote/mainwindow.h \
 		../QNote/nota.h \
 		../QNote/notelistwidget.h \
 		../QNote/note.h \
-		../QNote/notedetailwidget.h \
 		../QNote/notewidget.h \
 		../QNote/simplenote.h \
 		../QNote/todonote.h \
@@ -892,11 +876,6 @@ note.o: ../QNote/note.cpp ../QNote/note.h \
 		../QNote/container.h \
 		../QNote/nota.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o note.o ../QNote/note.cpp
-
-notedetailwidget.o: ../QNote/notedetailwidget.cpp ../QNote/notedetailwidget.h \
-		../QNote/nota.h \
-		../QNote/container.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o notedetailwidget.o ../QNote/notedetailwidget.cpp
 
 notelistwidget.o: ../QNote/notelistwidget.cpp ../QNote/notelistwidget.h \
 		../QNote/container.h \
@@ -929,9 +908,6 @@ todonote.o: ../QNote/todonote.cpp ../QNote/todonote.h \
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
-
-moc_notedetailwidget.o: moc_notedetailwidget.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_notedetailwidget.o moc_notedetailwidget.cpp
 
 moc_notewidget.o: moc_notewidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_notewidget.o moc_notewidget.cpp

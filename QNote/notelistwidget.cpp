@@ -38,7 +38,7 @@ void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
     //title
     QLabel* title = new QLabel(it->getTitolo());
     title->setFont(QFont("Arial", 12, QFont::Normal));
-    hl->addWidget(title);
+    //hl->addWidget(title);
 
     //tag
     QLabel* tags = new QLabel("");
@@ -50,17 +50,21 @@ void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
         else
             tags->setText(tags->text() + ", " + it->getTag()[i]);
     }
-    tags->setStyleSheet("margin-left: 10px;");
+    tags->setStyleSheet("margin-left: 10px; margin-top:25px;");
     //tags->show();
     //tags->resize(100,100);
     QFont f( "Arial", 10, QFont::Light);
     tags->setFont(f);
+    tags->setAlignment(Qt::AlignBottom);
 
     hl->addWidget(tags);
 
     w->setLayout(hl);
 
     QListWidgetItem *item = new NoteListWidgetItem(it);
+    item->setText((*it).getTitolo());
+    item->setFont(QFont("Arial", 12, QFont::Normal));
+
 
     addItem(item);
 

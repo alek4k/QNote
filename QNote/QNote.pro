@@ -30,7 +30,6 @@ SOURCES += \
         mainwindow.cpp \
         nota.cpp \
         note.cpp \
-        notedetailwidget.cpp \
         notelistwidget.cpp \
         notewidget.cpp \
         simplenote.cpp \
@@ -43,7 +42,6 @@ HEADERS += \
         mainwindow.h \
         nota.h \
         note.h \
-        notedetailwidget.h \
         notelistwidget.h \
         notewidget.h \
         simplenote.h \
