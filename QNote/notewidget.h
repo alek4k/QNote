@@ -10,6 +10,7 @@
 #include <QImage>
 #include <QMessageBox>
 #include "notelistwidget.h"
+#include "todolistwidget.h"
 #include "note.h"
 
 class NoteWidget : public QWidget
@@ -38,6 +39,7 @@ private:
     QToolButton* const addImgButton;
     QToolButton* const addToDoListButton;
     QToolButton* const addTagButton;
+    ToDoListWidget* const todoList;
 
     ListaNote& note;
 

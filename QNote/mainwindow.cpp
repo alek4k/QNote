@@ -6,6 +6,11 @@
 #include "todonote.h"
 #include "imgnote.h"
 
+#include "iostream"
+#include "vector"
+#include "list"
+using namespace std;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       icon(new QIcon("QNote.ico")),
@@ -18,10 +23,13 @@ MainWindow::MainWindow(QWidget *parent)
     vector << "alpha" << "beta" << "delta";
     QVector<QString> vector2;
     vector2 << "ok" << "beta";
+    QList<ToDoItem> todoList;
+    todoList.push_back(ToDoItem("testo", true));
+    todoList.push_back(ToDoItem("uncompleted item", false));
     list.push_end(new SimpleNote("titolo", "descrizione", vector));
     list.push_end(new SimpleNote("aaaaah", "ok ok ok!!!", vector2));
     list.push_end(new ImgNote("immagine", "questa è una nota con immagine", vector, ""));
-    list.push_end(new ToDoNote("todo", "to do list nota", vector2, QList<ToDoItem>()));
+    list.push_end(new ToDoNote("todo", "to do list nota", vector2, todoList));
 
 
     mainWidget = new NoteWidget(list, this);
@@ -54,10 +62,32 @@ MainWindow::MainWindow(QWidget *parent)
     fileMenu->addAction(quit);
 
     // Imposto il widget principale sulla finestra
-    setCentralWidget(mainWidget);
+    setCentralWidget(mainWidget);    
 }
 
 void MainWindow::exit() {
     QApplication::quit();
 }
 
+vector<QAbstractButton*> fun (list<QWidget*>& lst, const QSize& sz, vector<const QWidget*>& w) {
+    vector<QAbstractButton*> result;
+    for (auto it = lst.begin(); it != lst.end(); ++it) {
+        if (*it != nullptr && (*it)->sizeHint() == sz) {
+            w.push_back(*it);
+
+            if (!dynamic_cast<QAbstractSlider*>(*it)) {
+                delete(*it);
+                it = lst.erase(it);
+                --it;
+            }
+            else {
+                if(dynamic_cast<QCheckBox*>(*it) || dynamic_cast<QPushButton*>(*it)){
+                    result.push_back(static_cast<QAbstractButton*>(*it));
+                    it = lst.erase(it);
+                    --it;
+                }
+            }
+        }
+    }
+    return result;
+}

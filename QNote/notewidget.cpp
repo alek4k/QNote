@@ -19,6 +19,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       addImgButton(new QToolButton),
       addToDoListButton(new QToolButton),
       addTagButton(new QToolButton),
+      todoList(new ToDoListWidget(this)),
       note(note),
       lista(new NoteListWidget(this))
 {
@@ -175,6 +176,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         if (items.length() != 1) {
             imageLabel->clear();
             colonnaDx->removeWidget(imageLabel);
+            colonnaDx->removeWidget(todoList);
             textArea->clear();
             deleteNotaButton->setVisible(false);
             textArea->setReadOnly(true);
@@ -204,7 +206,22 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             }
 
             if (dynamic_cast<ToDoNote*>(&t)) {
+                auto currentToDoList = static_cast<ToDoNote*>(&t)->getToDoList();
+
+                for (auto it = currentToDoList.begin(); it != currentToDoList.end(); ++it) {
+                    todoList->addEntry(*it);
+                }
+
+                colonnaDx->removeWidget(textArea);
+                colonnaDx->addWidget(todoList);
+                colonnaDx->addWidget(textArea);
+                todoList->setVisible(true);
                 addToDoListButton->setVisible(false);
+            }
+            else {
+                todoList->clear();
+                colonnaDx->removeWidget(todoList);
+                todoList->setVisible(false);
             }
 
             if (dynamic_cast<SimpleNote*>(&t)) {
@@ -226,6 +243,7 @@ void NoteWidget::refreshList() const{
     lista->clear();
     textArea->clear();
     imageLabel->clear();
+    todoList->clear();
 
     for (auto it = note.begin(); it != note.end(); ++it) {
         lista->addEntry(it);

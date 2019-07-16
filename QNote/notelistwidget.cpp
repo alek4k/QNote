@@ -1,9 +1,9 @@
 #include "notelistwidget.h"
 #include "container.h"
 
-NoteListWidget::NoteListWidget(QWidget* parent)
-    : QListWidget(parent) {
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+NoteListWidget::NoteListWidget(QWidget* parent) : QListWidget(parent) {
+    //permetto la selezione di una sola nota per volta (niente combo Ctrl/Shift)
+    setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
 NoteListWidgetItem::NoteListWidgetItem(const Container<Nota>::Iterator& it)

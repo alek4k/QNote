@@ -8,6 +8,10 @@ void ToDoItem::updateItem(const QString &target, const bool &completato) noexcep
     this->completato = completato;
 }
 
+QString ToDoItem::getTarget() const noexcept {
+    return target;
+}
+
 ToDoItem::operator bool() const noexcept {
     return completato;
 }

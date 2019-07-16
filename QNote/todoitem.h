@@ -19,6 +19,8 @@ public:
 
     void updateItem(const QString& target, const bool& completato) noexcept;
 
+    QString getTarget() const noexcept;
+
     operator bool () const noexcept;
 };
 
