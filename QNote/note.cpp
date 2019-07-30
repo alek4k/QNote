@@ -90,8 +90,9 @@ void SerializzaNote::operator()(const Nota& nota) {
         auto toDoRaw = toDoNote->getToDoList();
         QJsonArray toDoList;
         for(auto it = toDoRaw.cbegin(); it != toDoRaw.cend(); ++it) {
-            toDoList.append((*it).getTarget());
-            *it ? toDoList.append(true) : toDoList.append(false);
+            QJsonObject tdobj;
+            tdobj.insert((*it).getTarget(), *it ? true : false);
+            toDoList.append(tdobj);
         }
         risultatoSerializzazione.insert("toDoList", toDoList);
         risultatoSerializzazione.insert("tipo", "toDoNote");
