@@ -4,7 +4,7 @@ ToDoNote::ToDoNote(const QString& titolo, const QString& descrizione, const QVec
     : Nota(titolo, descrizione, tag, data), toDoList(toDoList) {}
 
 ToDoNote::ToDoNote(const ToDoNote& tdnt) noexcept
-    : ToDoNote(tdnt.getTitolo(), tdnt.getDescrizione(), tdnt.getTag(), tdnt.toDoList) {}
+    : ToDoNote(tdnt.getTitolo(), tdnt.getDescrizione(), tdnt.getTag(), tdnt.toDoList, tdnt.getDataModifica()) {}
 
 ToDoNote* ToDoNote::clone() const noexcept {
     return new ToDoNote(*this);

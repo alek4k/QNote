@@ -4,7 +4,7 @@ ImgNote::ImgNote(const QString& titolo, const QString& descrizione, const QVecto
     : Nota(titolo, descrizione, tag, data), img64(img64) {}
 
 ImgNote::ImgNote(const ImgNote& imgnt) noexcept
-    : ImgNote(imgnt.getTitolo(), imgnt.getDescrizione(), imgnt.getTag(), imgnt.img64) {}
+    : ImgNote(imgnt.getTitolo(), imgnt.getDescrizione(), imgnt.getTag(), imgnt.img64, imgnt.getDataModifica()) {}
 
 ImgNote* ImgNote::clone() const noexcept {
     return new ImgNote(*this);

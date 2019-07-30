@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     todoList.push_back(ToDoItem("testo", true));
     todoList.push_back(ToDoItem("uncompleted item", false));
     list.push_back(new SimpleNote("titolo", "descrizione", vector));
-    list.push_back(new SimpleNote("aaaaah", "ok ok ok!!!", vector2));
+    list.push_back(new SimpleNote("aaaaah", "ok ok ok!!!"));
     list.push_back(new ImgNote("immagine", "questa è una nota con immagine", vector, ""));
     list.push_back(new ToDoNote("todo", "to do list nota", vector2, todoList));
 
@@ -70,10 +70,64 @@ void MainWindow::exit() {
 }
 
 void MainWindow::importNote() {
+    QString fileName = QFileDialog::getOpenFileName(this,
+            tr("&Open..."), "",
+            tr("Note JSON (*.json);;All Files (*)"));
 
+    // L'utente ha premuto su annulla e io non faccio nulla...
+    if (fileName.isEmpty()) return;
+
+    // Verifico che il file sia corretto e se lo è lo imposto come file corrente
+    QFileInfo fileInfo(fileName);
+    if ((fileInfo.exists()) && (fileInfo.isFile()) && (fileInfo.size() > 0)) {
+        percorsoFile = fileName;
+
+        // Carico il file selezionato dall'utente
+        try {
+            DeserializzaNote lettoreNote(percorsoFile);
+            ListaNote risultatoDeserializzazione = ListaNote::deserializza(lettoreNote);
+            list.erase();
+            //list.restore(risultatoDeserializzazione);
+            for (auto it = risultatoDeserializzazione.cbegin(); it != risultatoDeserializzazione.cend(); ++it){
+                auto simpleNote = dynamic_cast<const SimpleNote*>(&(*it));
+                auto toDoNote = dynamic_cast<const ToDoNote*>(&(*it));
+                auto imgNote = dynamic_cast<const ImgNote*>(&(*it));
+                if (simpleNote) {
+                    list.push_back(new SimpleNote(*simpleNote));
+                }
+                else if (toDoNote) {
+                    list.push_back(new ToDoNote(*toDoNote));
+                }
+                else if (imgNote) {
+                    list.push_back(new ImgNote(*imgNote));
+                }
+            }
+
+            QWidget *theWidget = centralWidget();
+            mainWidget = new NoteWidget(list, this);
+            setCentralWidget(mainWidget);
+            theWidget->deleteLater();
+        } catch (const DeserializeException& ex) {
+            QMessageBox messageBox;
+            messageBox.critical(nullptr, "Errore nel ripristino delle note", ex.what());
+        }
+    } else { // Se il file non è valido
+        // Mostro un messaggio di errore...
+        QMessageBox message;
+        message.warning(nullptr, "File non valido", "E' stato selezionato un file non valido");
+    }
 }
 
-void MainWindow::save() {
+void MainWindow::exportNote() {
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                 tr("&Save As..."), "", tr("Note JSON (*.json)"));
+
+    // L'utente ha premuto annulla...
+    if (fileName.isEmpty()) return;
+
+    // Cambio il percorso del file attualmente utilizzato
+    percorsoFile = fileName;
+
     QMessageBox messageBox;
     try {
         SerializzaNote serializzatore(percorsoFile);
@@ -86,22 +140,6 @@ void MainWindow::save() {
     } catch (const SerializeException& ex) {
         messageBox.critical(0, "Errore nel salvataggio delle note", ex.what());
     }
-}
-
-void MainWindow::exportNote() {
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                 tr("&Save As..."), "", tr("Calendario JSON (*.json)"));
-
-    // L'utente ha premuto annulla...
-    if (fileName.isEmpty()) return;
-
-    // Cambio il percorso del file attualmente utilizzato
-    percorsoFile = fileName;
-
-    save();
-
-    // Salvo la lista di eventi
-    save();
 }
 
 vector<QAbstractButton*> fun (list<QWidget*>& lst, const QSize& sz, vector<const QWidget*>& w) {

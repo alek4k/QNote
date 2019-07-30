@@ -214,6 +214,10 @@ public:
             remove(begin());
     }
 
+    void restore(Container<T>& other) noexcept {
+        first = other.first;
+    }
+
     bool empty() const noexcept {
         return !first;
     }
@@ -266,7 +270,7 @@ public:
     }
 
     void remove(const Iterator& it) noexcept {
-        //if (!it.nodo) return;
+        if (!it.nodo) return;
 
         if (it.nodo == first) {
             Nodo* temp = first;

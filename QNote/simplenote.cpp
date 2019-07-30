@@ -4,7 +4,7 @@ SimpleNote::SimpleNote(const QString& title, const QString& text, const QVector<
     : Nota(title, text, tag, data) {}
 
 SimpleNote::SimpleNote(const SimpleNote& smplnt) noexcept
-    : SimpleNote(smplnt.getTitolo(), smplnt.getDescrizione(), smplnt.getTag()) {}
+    : SimpleNote(smplnt.getTitolo(), smplnt.getDescrizione(), smplnt.getTag(), smplnt.getDataModifica()) {}
 
 SimpleNote* SimpleNote::clone() const noexcept {
     return new SimpleNote(*this);

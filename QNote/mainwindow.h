@@ -32,7 +32,6 @@ private slots:
     void importNote();
     void exportNote();
     void exit();
-    void save();
 
     //void createMenu();
 };
