@@ -26,10 +26,10 @@ MainWindow::MainWindow(QWidget *parent)
     QList<ToDoItem> todoList;
     todoList.push_back(ToDoItem("testo", true));
     todoList.push_back(ToDoItem("uncompleted item", false));
-    list.push_end(new SimpleNote("titolo", "descrizione", vector));
-    list.push_end(new SimpleNote("aaaaah", "ok ok ok!!!", vector2));
-    list.push_end(new ImgNote("immagine", "questa è una nota con immagine", vector, ""));
-    list.push_end(new ToDoNote("todo", "to do list nota", vector2, todoList));
+    list.push_back(new SimpleNote("titolo", "descrizione", vector));
+    list.push_back(new SimpleNote("aaaaah", "ok ok ok!!!", vector2));
+    list.push_back(new ImgNote("immagine", "questa è una nota con immagine", vector, ""));
+    list.push_back(new ToDoNote("todo", "to do list nota", vector2, todoList));
 
 
     mainWidget = new NoteWidget(list, this);

@@ -1,10 +1,7 @@
 #include "nota.h"
 
-Nota::Nota(const QString& title, const QString& text, const QVector<QString>& tag) noexcept
-    : titolo(title), descrizione(text), tag(tag)
-{
-    dataUltimaModifica = QDateTime::currentDateTime();
-}
+Nota::Nota(const QString& title, const QString& text, const QVector<QString>& tag, const QDateTime& data) noexcept
+    : titolo(title), descrizione(text), tag(tag), dataUltimaModifica(data) {}
 
 QString Nota::getTitolo() const noexcept {
     return titolo;

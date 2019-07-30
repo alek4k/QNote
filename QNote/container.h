@@ -226,11 +226,11 @@ public:
         first = new Nodo(item, nullptr, first);
     }
 
-    void push_end(const T& item) noexcept {
-        push_end(new T(item));
+    void push_back(const T& item) noexcept {
+        push_back(new T(item));
     }
 
-    void push_end(T* item) {
+    void push_back(T* item) {
         if (!first) push_front(item);
         else {
             Nodo* temp = first;
@@ -258,7 +258,7 @@ public:
         }
 
         if (!it.nodo) {
-            push_end(item);
+            push_back(item);
             return;
         }
 

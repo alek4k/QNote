@@ -61,7 +61,6 @@ private:
 class DeserializzaNote : public ListaNote::Deserializzazione {
 public:
     DeserializzaNote(const QString& path);
-    ~DeserializzaNote() override = default;
     void operator()(ListaNote& risultato) override;
 private:
     QFile file;

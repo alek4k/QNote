@@ -16,15 +16,15 @@ class Nota
 private:
     QString titolo;
     QString descrizione;
-    QDateTime dataUltimaModifica;
     QVector<QString> tag;
+    QDateTime dataUltimaModifica;
 public:
     /**
      * @brief Costruisce una nuova nota
      * @param titolo il titolo della nota
      * @param descrizione il testo della nota
      */
-    Nota(const QString& titolo, const QString& descrizione, const QVector<QString>& tag) noexcept;
+    Nota(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QDateTime& data = QDateTime::currentDateTime()) noexcept;
 
     Nota(const Nota&) = default;
 

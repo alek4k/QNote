@@ -1,7 +1,7 @@
 #include "todonote.h"
 
-ToDoNote::ToDoNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QList<ToDoItem>& toDoList) noexcept
-    : Nota(titolo, descrizione, tag), toDoList(toDoList) {}
+ToDoNote::ToDoNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QList<ToDoItem>& toDoList, const QDateTime& data) noexcept
+    : Nota(titolo, descrizione, tag, data), toDoList(toDoList) {}
 
 ToDoNote::ToDoNote(const ToDoNote& tdnt) noexcept
     : ToDoNote(tdnt.getTitolo(), tdnt.getDescrizione(), tdnt.getTag(), tdnt.toDoList) {}

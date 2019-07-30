@@ -10,7 +10,7 @@ class ImgNote : public Nota
 private:
     QString img64;
 public:
-    ImgNote(const QString&, const QString&, const QVector<QString>&, const QString&) noexcept;
+    ImgNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QString& immagine, const QDateTime& data = QDateTime::currentDateTime()) noexcept;
 
     ImgNote(const ImgNote&) noexcept;
 

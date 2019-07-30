@@ -9,7 +9,7 @@ class ToDoNote : public Nota
 private:
     QList<ToDoItem> toDoList;
 public:
-    ToDoNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QList<ToDoItem>& toDoList = QList<ToDoItem>()) noexcept;
+    ToDoNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QList<ToDoItem>& toDoList = QList<ToDoItem>(), const QDateTime& data = QDateTime::currentDateTime()) noexcept;
 
     ToDoNote(const ToDoNote&) noexcept;
 

@@ -73,7 +73,7 @@ void SerializzaNote::operator()(const Nota& nota) {
         tag.append(*it);
     }
     risultatoSerializzazione.insert("tag", tag);
-    risultatoSerializzazione.insert("dataUltimaModifica", nota.getDataModifica().date().toJulianDay());
+    risultatoSerializzazione.insert("dataUltimaModifica", nota.getDataModifica().toString());
 
     const auto simpleNote = dynamic_cast<const SimpleNote*>(&nota);
     const auto imgNote = dynamic_cast<const ImgNote*>(&nota);
@@ -90,9 +90,10 @@ void SerializzaNote::operator()(const Nota& nota) {
         auto toDoRaw = toDoNote->getToDoList();
         QJsonArray toDoList;
         for(auto it = toDoRaw.cbegin(); it != toDoRaw.cend(); ++it) {
-            QJsonObject tdobj;
-            tdobj.insert((*it).getTarget(), *it ? true : false);
-            toDoList.append(tdobj);
+            QJsonObject toDoObj;
+            toDoObj.insert("target", (*it).getTarget());
+            toDoObj.insert("status", *it ? true : false);
+            toDoList.append(toDoObj);
         }
         risultatoSerializzazione.insert("toDoList", toDoList);
         risultatoSerializzazione.insert("tipo", "toDoNote");
@@ -101,4 +102,60 @@ void SerializzaNote::operator()(const Nota& nota) {
     elementi.push_back(risultatoSerializzazione);
 }
 
+DeserializzaNote::DeserializzaNote(const QString& path)
+    : file(path), fileExists(QFileInfo::exists(path) && QFileInfo(path).isFile()) {
+    if (fileExists) {
+        if (!file.open(QIODevice::ReadOnly))
+            throw DeserializeException("Errore nella lettura del file di salvataggio");
+
+        // Leggo tutto il file
+        fileContent = QString(file.readAll());
+
+        // Faccio il parsing del contenuto
+        doc = QJsonDocument::fromJson(fileContent.toUtf8());
+
+        // Chiudo il file
+        file.close();
+    }
+}
+
+void DeserializzaNote::operator()(ListaNote& risultato) {
+    // Se il file non esiste non ha molto senso cercare di estrarre dati da esso...
+    if (!fileExists) return;
+
+    if (!doc.isObject())
+        throw DeserializeException("Errore nella interpretazione del file di salvataggio: formato non valido");
+
+    // Scorro tutte le note presenti nel JSON
+    const auto note = doc.object()["note"].toArray();
+    for (auto it = note.cbegin(); it != note.cend(); ++it) {
+        const auto risultatoSerializzazione = it->toObject();
+
+        QDateTime data = QDateTime::fromString(risultatoSerializzazione["dataUltimaModifica"].toString());
+        QString titolo = risultatoSerializzazione["titolo"].toString();
+        QString descrizione = risultatoSerializzazione["descrizione"].toString();
+        QString tipo = risultatoSerializzazione["tipo"].toString();
+        const auto tagArray = risultatoSerializzazione["tag"].toArray();
+        QVector<QString> tag;
+        for(auto it = tagArray.cbegin(); it != tagArray.cend(); ++it) {
+            tag.push_front((*it).toString());
+        }
+        if (tipo == "simpleNote") {
+            risultato.push_back(new SimpleNote(titolo, descrizione, tag, data));
+        } else if (tipo == "imgNote") {
+            QString image = risultatoSerializzazione["image"].toString();
+            risultato.push_back(new ImgNote(titolo, descrizione, tag, image, data));
+        } else if (tipo == "toDoNote") {
+            const auto toDoRaw = risultatoSerializzazione["toDoList"].toArray();
+            QList<ToDoItem> toDoList;
+            for(auto it = toDoRaw.cbegin(); it != toDoRaw.cend(); ++it) {
+                QJsonObject toDoObj = (*it).toObject();
+                toDoList.push_front(ToDoItem(toDoObj["target"].toString(), toDoObj["status"].toBool()));
+            }
+            risultato.push_back(new ToDoNote(titolo, descrizione, tag, toDoList, data));
+        } else {
+            throw DeserializeException("Tipologia nota non riconosciuta");
+        }
+    }
+}
 

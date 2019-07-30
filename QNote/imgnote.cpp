@@ -1,7 +1,7 @@
 #include "imgnote.h"
 
-ImgNote::ImgNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QString& img64) noexcept
-    : Nota(titolo, descrizione, tag), img64(img64) {}
+ImgNote::ImgNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QString& img64, const QDateTime& data) noexcept
+    : Nota(titolo, descrizione, tag, data), img64(img64) {}
 
 ImgNote::ImgNote(const ImgNote& imgnt) noexcept
     : ImgNote(imgnt.getTitolo(), imgnt.getDescrizione(), imgnt.getTag(), imgnt.img64) {}
