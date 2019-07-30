@@ -27,10 +27,12 @@ private:
     NoteWidget * mainWidget;
 
     ListaNote list;
+    QString percorsoFile;
 private slots:
-    /*void importNote();
-    void exportNote();*/
+    void importNote();
+    void exportNote();
     void exit();
+    void save();
 
     //void createMenu();
 };

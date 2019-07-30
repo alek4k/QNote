@@ -9,6 +9,8 @@ public:
     class Iterator;
     class ConstIterator;
     class Ricerca;
+    class Serializzazione;
+    class Deserializzazione;
 private:
     class Nodo {
         T* info;
@@ -82,23 +84,23 @@ public:
     }
 
     class Serializzazione {
-    protected:
+    public:
         virtual ~Serializzazione() = default;
         virtual void operator() (const T& elemento) = 0;
     };
 
     class Deserializzazione {
-    protected:
+    public:
         virtual ~Deserializzazione() = default;
         virtual void operator()(Container<T>& risultato) = 0;
     };
 
-    void serializza(const Serializzazione& cs) {
+    void serializza(Serializzazione& cs) {
         for (auto it = begin(); it != end(); ++it)
             cs(*it);
     }
 
-    static Container<T> deserializza(const Deserializzazione& cd) {
+    static Container<T> deserializza(Deserializzazione& cd) {
         Container<T> risultato;
         cd(risultato);
         return risultato;
@@ -237,6 +239,16 @@ public:
 
             temp = new Nodo(item, temp, nullptr);
         }
+    }
+
+    int count() const {
+        Nodo* temp = first;
+        int result = 0;
+        while (temp) {
+            result++;
+            temp = temp->next;
+        }
+        return result;
     }
 
     void insert(const Iterator& it, T* item) noexcept {

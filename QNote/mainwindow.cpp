@@ -69,6 +69,41 @@ void MainWindow::exit() {
     QApplication::quit();
 }
 
+void MainWindow::importNote() {
+
+}
+
+void MainWindow::save() {
+    QMessageBox messageBox;
+    try {
+        SerializzaNote serializzatore(percorsoFile);
+        list.serializza(serializzatore);
+
+        QString messaggio("Sono state correttamente salvate ");
+        messaggio += QString::number(list.count()) + " note";
+
+        messageBox.information(0, "Note salvate con successo", messaggio);
+    } catch (const SerializeException& ex) {
+        messageBox.critical(0, "Errore nel salvataggio delle note", ex.what());
+    }
+}
+
+void MainWindow::exportNote() {
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                 tr("&Save As..."), "", tr("Calendario JSON (*.json)"));
+
+    // L'utente ha premuto annulla...
+    if (fileName.isEmpty()) return;
+
+    // Cambio il percorso del file attualmente utilizzato
+    percorsoFile = fileName;
+
+    save();
+
+    // Salvo la lista di eventi
+    save();
+}
+
 vector<QAbstractButton*> fun (list<QWidget*>& lst, const QSize& sz, vector<const QWidget*>& w) {
     vector<QAbstractButton*> result;
     for (auto it = lst.begin(); it != lst.end(); ++it) {
