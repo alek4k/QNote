@@ -817,6 +817,9 @@ moc_mainwindow.cpp: ../QNote/mainwindow.h \
 		../QNote/notelistwidget.h \
 		../QNote/note.h \
 		../QNote/notewidget.h \
+		../QNote/todolistwidget.h \
+		../QNote/todoitem.h \
+		../QNote/todonote.h \
 		moc_predefs.h \
 		/usr/bin/moc
 	/usr/bin/moc $(DEFINES) --include /home/alessandro/Scrivania/QNote/build-QNote-Desktop-Debug/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/alessandro/Scrivania/QNote/QNote -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I. -I/usr/include/c++/8.3.0 -I/usr/include/c++/8.3.0/x86_64-pc-linux-gnu -I/usr/include/c++/8.3.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed -I/usr/include ../QNote/mainwindow.h -o moc_mainwindow.cpp
@@ -826,6 +829,9 @@ moc_notewidget.cpp: ../QNote/notewidget.h \
 		../QNote/container.h \
 		../QNote/note.h \
 		../QNote/nota.h \
+		../QNote/todolistwidget.h \
+		../QNote/todoitem.h \
+		../QNote/todonote.h \
 		moc_predefs.h \
 		/usr/bin/moc
 	/usr/bin/moc $(DEFINES) --include /home/alessandro/Scrivania/QNote/build-QNote-Desktop-Debug/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/alessandro/Scrivania/QNote/QNote -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I. -I/usr/include/c++/8.3.0 -I/usr/include/c++/8.3.0/x86_64-pc-linux-gnu -I/usr/include/c++/8.3.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/include-fixed -I/usr/include ../QNote/notewidget.h -o moc_notewidget.cpp
@@ -855,7 +861,10 @@ main.o: ../QNote/main.cpp ../QNote/mainwindow.h \
 		../QNote/nota.h \
 		../QNote/notelistwidget.h \
 		../QNote/note.h \
-		../QNote/notewidget.h
+		../QNote/notewidget.h \
+		../QNote/todolistwidget.h \
+		../QNote/todoitem.h \
+		../QNote/todonote.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../QNote/main.cpp
 
 mainwindow.o: ../QNote/mainwindow.cpp ../QNote/mainwindow.h \
@@ -864,9 +873,10 @@ mainwindow.o: ../QNote/mainwindow.cpp ../QNote/mainwindow.h \
 		../QNote/notelistwidget.h \
 		../QNote/note.h \
 		../QNote/notewidget.h \
-		../QNote/simplenote.h \
-		../QNote/todonote.h \
+		../QNote/todolistwidget.h \
 		../QNote/todoitem.h \
+		../QNote/todonote.h \
+		../QNote/simplenote.h \
 		../QNote/imgnote.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../QNote/mainwindow.cpp
 
@@ -889,10 +899,11 @@ notewidget.o: ../QNote/notewidget.cpp ../QNote/notewidget.h \
 		../QNote/container.h \
 		../QNote/note.h \
 		../QNote/nota.h \
-		../QNote/simplenote.h \
-		../QNote/imgnote.h \
+		../QNote/todolistwidget.h \
+		../QNote/todoitem.h \
 		../QNote/todonote.h \
-		../QNote/todoitem.h
+		../QNote/simplenote.h \
+		../QNote/imgnote.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o notewidget.o ../QNote/notewidget.cpp
 
 simplenote.o: ../QNote/simplenote.cpp ../QNote/simplenote.h \

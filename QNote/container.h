@@ -83,23 +83,25 @@ public:
 
     class Serializzazione {
     protected:
+        virtual ~Serializzazione() = default;
         virtual void operator() (const T& elemento) = 0;
     };
 
     class Deserializzazione {
     protected:
-        virtual Container<T> operator()() = 0;
+        virtual ~Deserializzazione() = default;
+        virtual void operator()(Container<T>& risultato) = 0;
     };
 
-    void serializza(const Ricerca& daSerializzare, const Serializzazione& cs) {
-        auto serializzandi = this->search(daSerializzare);
-
-        // scorro tutti i risultati in serializzandi e per ogni elemento "el" faccio;
-        //cs(el);
+    void serializza(const Serializzazione& cs) {
+        for (auto it = begin(); it != end(); ++it)
+            cs(*it);
     }
 
     static Container<T> deserializza(const Deserializzazione& cd) {
-        cd();
+        Container<T> risultato;
+        cd(risultato);
+        return risultato;
     }
 
     class Iterator {

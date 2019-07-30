@@ -2,6 +2,7 @@
 #include "simplenote.h"
 #include "imgnote.h"
 #include "todonote.h"
+using std::string;
 
 NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     : QWidget(parent),
@@ -23,11 +24,12 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       note(note),
       lista(new NoteListWidget(this))
 {
-
     addToDoListButton->setVisible(false);
     addImgButton->setVisible(false);
     deleteNotaButton->setVisible(false);
     textArea->setReadOnly(true);
+    //abilito drag and drop sulla ToDoList
+    //todoList->setDragDropMode(QAbstractItemView::InternalMove);
 
     //ACTION SCRITTURA TESTO SU CAMPO DI RICERCA
     connect(searchBar, &QLineEdit::textChanged, [this] () {
@@ -60,12 +62,28 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                 static_cast<NoteListWidgetItem*>(items[0])->setText(titolo);
             }
 
-            //tutto diventa descrizione della nota
-            static_cast<NoteListWidgetItem*>(items[0])->getNota()->setDescrizione(textArea->toPlainText());
+            //tutto il resto diventa descrizione della nota
+            QString testo = textArea->toPlainText();
+            QString descrizione = testo.mid(titolo.length()+1,testo.length()-titolo.length());
+            static_cast<NoteListWidgetItem*>(items[0])->getNota()->setDescrizione(descrizione);
         }
     });
 
 
+    //SALVATAGGIO AUTOMATICO OBIETTIVI TO-DO LIST
+    /*connect(todoList->itemDelegate(), &QAbstractItemDelegate::commitData, [this] () {
+        //mi prendo l'elemento della todolsit modificato e vado a farci updateItem con il text e il checked
+        auto changed = static_cast<ToDoListWidgetItem*>(todoList->currentItem());
+        changed->getToDo()->updateItem(changed->text(), changed->checkState());
+    });*/
+
+
+    connect(todoList, &ToDoListWidget::itemPressed, [this] () {
+        int n = todoList->currentRow();
+        QModelIndex i = todoList->currentIndex();
+        auto changed = static_cast<ToDoListWidgetItem*>(todoList->currentItem());
+        changed->getToDo()->updateItem(changed->text(), changed->checkState() == Qt::Checked ? true : false);
+    });
 
 
     //PRESSIONE PULSANTE ELIMINAZIONE NOTA
@@ -92,6 +110,25 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
+    //PRESSIONE PULSANTE AGGIUNTA TODO LSIT
+    connect(addToDoListButton, &QToolButton::clicked, [this] () {
+       auto items = lista->selectedItems();
+       if(items.length() == 1) {
+           ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+           ToDoNote* nuovaToDo = new ToDoNote((*it).getTitolo(), (*it).getDescrizione(), (*it).getTag());
+           aggiornaNota(it, nuovaToDo);
+       }
+    });
+
+    //PRESSIONE PULSANTE AGGIUNTA IMMAGINE
+    connect(addImgButton, &QToolButton::clicked, [this] () {
+        auto items = lista->selectedItems();
+        if(items.length() == 1) {
+            ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+            imageOpen();
+        }
+    });
+
     //opzioni grafiche lista note
     //lista->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );
     //lista->setAlternatingRowColors(true);
@@ -105,7 +142,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                                "background-color: white}"
                                );
 
-    image = new QPixmap(QPixmap::fromImage(QImage("bella.jpg")));
+    image = new QPixmap(QPixmap::fromImage(QImage("cliors.jpg")));
 
     // set a scaled pixmap to a w x h window keeping its aspect ratio
 
@@ -178,6 +215,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             colonnaDx->removeWidget(imageLabel);
             colonnaDx->removeWidget(todoList);
             textArea->clear();
+            todoList->clear();
             deleteNotaButton->setVisible(false);
             textArea->setReadOnly(true);
             addImgButton->setVisible(false);
@@ -188,7 +226,9 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         else {
             Nota& t = *static_cast<NoteListWidgetItem*>(items[0])->getNota();
 
-            textArea->setPlainText(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione());
+            QString titolo = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getTitolo();
+            QString descr = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione();
+            textArea->setPlainText(titolo + "\n" + descr);
 
             if (dynamic_cast<ImgNote*>(&t)) {
                 imageLabel->setPixmap((*image).scaled(400,400,Qt::KeepAspectRatio));
@@ -206,10 +246,12 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             }
 
             if (dynamic_cast<ToDoNote*>(&t)) {
+                todoList->clear();
                 auto currentToDoList = static_cast<ToDoNote*>(&t)->getToDoList();
 
-                for (auto it = currentToDoList.begin(); it != currentToDoList.end(); ++it) {
-                    todoList->addEntry(*it);
+                //todoList->addEntry(new ToDoItem("Inserisci obiettivo..."));
+                for (auto it = currentToDoList.cbegin(); it != currentToDoList.cend(); ++it) {
+                    todoList->addEntry(&const_cast<ToDoItem&>(*it));
                 }
 
                 colonnaDx->removeWidget(textArea);
@@ -262,6 +304,13 @@ void NoteWidget::cancellaNota(const ListaNote::Iterator& it) {
     }
 }
 
+void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
+    note.remove(it);
+    ++it;
+    note.insert(it, nota);
+    refreshList();
+}
+
 void NoteWidget::addTag(const ListaNote::Iterator& it) {
     bool ok;
     QString tag = QInputDialog::getText(this, "Nuovo tag",
@@ -284,3 +333,48 @@ void NoteWidget::addTag(const ListaNote::Iterator& it) {
     }
 }
 
+static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMode acceptMode)
+{
+    static bool firstDialog = true;
+
+    if (firstDialog) {
+        firstDialog = false;
+        const QStringList picturesLocations = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
+        dialog.setDirectory(picturesLocations.isEmpty() ? QDir::currentPath() : picturesLocations.last());
+    }
+
+    QStringList mimeTypeFilters;
+    const QByteArrayList supportedMimeTypes = acceptMode == QFileDialog::AcceptOpen
+        ? QImageReader::supportedMimeTypes() : QImageWriter::supportedMimeTypes();
+    for (const QByteArray &mimeTypeName : supportedMimeTypes)
+        mimeTypeFilters.append(mimeTypeName);
+    mimeTypeFilters.sort();
+    dialog.setMimeTypeFilters(mimeTypeFilters);
+    dialog.selectMimeTypeFilter("image/jpeg");
+    if (acceptMode == QFileDialog::AcceptSave)
+        dialog.setDefaultSuffix("jpg");
+}
+
+bool NoteWidget::loadFile(const QString &fileName)
+{
+    QImageReader reader(fileName);
+    reader.setAutoTransform(true);
+    const QImage newImage = reader.read();
+    if (newImage.isNull()) {
+        QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
+                                 tr("Cannot load %1: %2")
+                                 .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
+        return false;
+    }
+
+    image = new QPixmap(QPixmap::fromImage(QImage(fileName)));
+
+    return true;
+}
+
+void NoteWidget::imageOpen() {
+    QFileDialog dialog(this, tr("Open File"));
+        initializeImageFileDialog(dialog, QFileDialog::AcceptOpen);
+
+        while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().first())) {}
+}

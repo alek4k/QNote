@@ -9,7 +9,7 @@ class ToDoNote : public Nota
 private:
     QList<ToDoItem> toDoList;
 public:
-    ToDoNote(const QString&, const QString&, const QVector<QString>&, const QList<ToDoItem>&) noexcept;
+    ToDoNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QList<ToDoItem>& toDoList = QList<ToDoItem>()) noexcept;
 
     ToDoNote(const ToDoNote&) noexcept;
 
@@ -20,6 +20,8 @@ public:
     ToDoNote* clone() const noexcept override;
 
     QList<ToDoItem> getToDoList() const noexcept;
+
+    void setToDoList(const QList<ToDoItem>&) noexcept;
 
     int targetCompletati() const noexcept;
 };

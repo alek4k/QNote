@@ -23,7 +23,10 @@ public:
 protected slots:
     void refreshList() const;
     void cancellaNota(const ListaNote::Iterator&);
+    void aggiornaNota(ListaNote::Iterator&, Nota*);
     void addTag(const ListaNote::Iterator&);
+    void imageOpen();
+    bool loadFile(const QString&);
 private:
     QPlainTextEdit* const textArea;
     QGridLayout* const layout;

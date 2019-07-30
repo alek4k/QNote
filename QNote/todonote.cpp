@@ -14,6 +14,10 @@ QList<ToDoItem> ToDoNote::getToDoList() const noexcept {
     return toDoList;
 }
 
+void ToDoNote::setToDoList(const QList<ToDoItem>& list) noexcept {
+    toDoList = list;
+}
+
 int ToDoNote::targetCompletati() const noexcept {
     int completati = 0;
     for (auto it = toDoList.begin(); it != toDoList.end(); ++it) {
