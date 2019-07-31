@@ -70,16 +70,16 @@ static const uint qt_meta_data_NoteWidget[] = {
        3,    1,   45,    2, 0x09 /* Protected */,
        5,    2,   48,    2, 0x09 /* Protected */,
        8,    1,   53,    2, 0x09 /* Protected */,
-       9,    0,   56,    2, 0x09 /* Protected */,
-      10,    1,   57,    2, 0x09 /* Protected */,
+       9,    1,   56,    2, 0x09 /* Protected */,
+      10,    2,   59,    2, 0x09 /* Protected */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 4,    2,
     QMetaType::Void, 0x80000000 | 6, 0x80000000 | 7,    2,    2,
     QMetaType::Void, 0x80000000 | 4,    2,
-    QMetaType::Void,
-    QMetaType::Bool, QMetaType::QString,    2,
+    QMetaType::Void, 0x80000000 | 6,    2,
+    QMetaType::Bool, QMetaType::QString, 0x80000000 | 6,    2,    2,
 
        0        // eod
 };
@@ -94,8 +94,8 @@ void NoteWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 1: _t->cancellaNota((*reinterpret_cast< const ListaNote::Iterator(*)>(_a[1]))); break;
         case 2: _t->aggiornaNota((*reinterpret_cast< ListaNote::Iterator(*)>(_a[1])),(*reinterpret_cast< Nota*(*)>(_a[2]))); break;
         case 3: _t->addTag((*reinterpret_cast< const ListaNote::Iterator(*)>(_a[1]))); break;
-        case 4: _t->imageOpen(); break;
-        case 5: { bool _r = _t->loadFile((*reinterpret_cast< const QString(*)>(_a[1])));
+        case 4: _t->imageOpen((*reinterpret_cast< ListaNote::Iterator(*)>(_a[1]))); break;
+        case 5: { bool _r = _t->loadFile((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< ListaNote::Iterator(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
         default: ;
         }

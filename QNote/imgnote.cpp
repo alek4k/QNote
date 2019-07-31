@@ -14,6 +14,6 @@ QString ImgNote::getImage() const {
     return img64;
 }
 
-void ImgNote::setImage(const QString& img64) noexcept {
-    this->img64 = img64;
+void ImgNote::setImage(const QString& base64) noexcept {
+    this->img64 = base64;
 }

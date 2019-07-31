@@ -125,7 +125,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         auto items = lista->selectedItems();
         if(items.length() == 1) {
             ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
-            imageOpen();
+            imageOpen(it);
         }
     });
 
@@ -230,8 +230,24 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             QString descr = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione();
             textArea->setPlainText(titolo + "\n" + descr);
 
-            if (dynamic_cast<ImgNote*>(&t)) {
-                imageLabel->setPixmap((*image).scaled(400,400,Qt::KeepAspectRatio));
+            auto imgNota = dynamic_cast<ImgNote*>(&t);
+            if (imgNota) {
+                /*QByteArray arr;
+                arr.append(imgNota->getImage());
+                QByteArray bytes = QByteArray::fromBase64(arr, QByteArray::Base64UrlEncoding);
+                imageLabel->setPixmap(QPixmap::fromImage(QImage::fromData(bytes, "PNG")).scaled(400,400,Qt::KeepAspectRatio));
+*/
+
+                //imageLabel->setPixmap((*image).scaled(400,400,Qt::KeepAspectRatio));
+
+
+                QImage img;
+                //img.loadFromData(QByteArray::fromBase64(imgNota->getImage().toStdString().c_str()));
+                img.loadFromData(QByteArray::fromBase64(imgNota->getImage().toLocal8Bit()));
+                imageLabel->setPixmap(QPixmap::fromImage(img).scaled(400, 400, Qt::KeepAspectRatio));
+
+
+
                 colonnaDx->removeWidget(textArea);
                 colonnaDx->addWidget(imageLabel);
                 colonnaDx->addWidget(textArea);
@@ -355,7 +371,7 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
         dialog.setDefaultSuffix("jpg");
 }
 
-bool NoteWidget::loadFile(const QString &fileName)
+bool NoteWidget::loadFile(const QString& fileName, ListaNote::Iterator& it)
 {
     QImageReader reader(fileName);
     reader.setAutoTransform(true);
@@ -369,12 +385,25 @@ bool NoteWidget::loadFile(const QString &fileName)
 
     image = new QPixmap(QPixmap::fromImage(QImage(fileName)));
 
+    QPixmap pixmap = QPixmap::fromImage(QImage(fileName));
+    QByteArray bytes;
+    QBuffer buffer(&bytes);
+    buffer.open(QIODevice::WriteOnly);
+    pixmap.save(&buffer, "JPG"); // writes pixmap into bytes in PNG format
+
+    ImgNote* nuovaImgNota = new ImgNote((*it).getTitolo(),
+                                        (*it).getDescrizione(),
+                                        (*it).getTag(),
+                                        bytes.toBase64());
+    aggiornaNota(it, nuovaImgNota);
+
     return true;
 }
 
-void NoteWidget::imageOpen() {
+void NoteWidget::imageOpen(ListaNote::Iterator& it) {
     QFileDialog dialog(this, tr("Open File"));
-        initializeImageFileDialog(dialog, QFileDialog::AcceptOpen);
+    initializeImageFileDialog(dialog, QFileDialog::AcceptOpen);
 
-        while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().first())) {}
+    //tengo aperto il dialog fino a quando l'utente non lo chiude o inserisce un file valido
+    while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().first(), it)) {}
 }

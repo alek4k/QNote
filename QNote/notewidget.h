@@ -25,8 +25,8 @@ protected slots:
     void cancellaNota(const ListaNote::Iterator&);
     void aggiornaNota(ListaNote::Iterator&, Nota*);
     void addTag(const ListaNote::Iterator&);
-    void imageOpen();
-    bool loadFile(const QString&);
+    void imageOpen(ListaNote::Iterator&);
+    bool loadFile(const QString&, ListaNote::Iterator&);
 private:
     QPlainTextEdit* const textArea;
     QGridLayout* const layout;

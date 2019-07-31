@@ -141,26 +141,3 @@ void MainWindow::exportNote() {
         messageBox.critical(0, "Errore nel salvataggio delle note", ex.what());
     }
 }
-
-vector<QAbstractButton*> fun (list<QWidget*>& lst, const QSize& sz, vector<const QWidget*>& w) {
-    vector<QAbstractButton*> result;
-    for (auto it = lst.begin(); it != lst.end(); ++it) {
-        if (*it != nullptr && (*it)->sizeHint() == sz) {
-            w.push_back(*it);
-
-            if (!dynamic_cast<QAbstractSlider*>(*it)) {
-                delete(*it);
-                it = lst.erase(it);
-                --it;
-            }
-            else {
-                if(dynamic_cast<QCheckBox*>(*it) || dynamic_cast<QPushButton*>(*it)){
-                    result.push_back(static_cast<QAbstractButton*>(*it));
-                    it = lst.erase(it);
-                    --it;
-                }
-            }
-        }
-    }
-    return result;
-}

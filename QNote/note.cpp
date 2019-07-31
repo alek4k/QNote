@@ -1,11 +1,6 @@
 #include "note.h"
 
-
 //VisualizzazioneOrdinata
-Container<const ListaNote::ConstIterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::ConstIterator>& risultatiDisordinati) const {
-    return risultatiDisordinati;
-}
-
 Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
     return risultatiDisordinati;
 }
@@ -32,10 +27,6 @@ bool RicercaTesto::operator() (const Nota& elemento) const {
     return false;
 }
 
-Container<const ListaNote::ConstIterator> RicercaTesto::getResults(Container<const ListaNote::ConstIterator> &risultatiDisordinati) const {
-    return risultatiDisordinati;
-}
-
 Container<const ListaNote::Iterator> RicercaTesto::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
     return risultatiDisordinati;
 }
@@ -59,7 +50,7 @@ SerializzaNote::~SerializzaNote() {
     // Scrivo il json nel file
     file.write(QJsonDocument(serializzazione).toJson(QJsonDocument::Indented));
 
-    // E chiudo il file per non fare brutte figure
+    // Chiudo il file
     file.close();
 }
 
