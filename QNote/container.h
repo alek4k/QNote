@@ -250,7 +250,7 @@ public:
             return;
         }
 
-        Nodo* nuovo = new Nodo(item, it.nodo->previous, it.nodo);
+        new Nodo(item, it.nodo->previous, it.nodo);
     }
 
     void remove(const Iterator& it) noexcept {
