@@ -110,7 +110,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
-    //PRESSIONE PULSANTE AGGIUNTA TODO LSIT
+    //PRESSIONE PULSANTE AGGIUNTA TODO LIST
     connect(addToDoListButton, &QToolButton::clicked, [this] () {
        auto items = lista->selectedItems();
        if(items.length() == 1) {
@@ -324,7 +324,10 @@ void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     note.remove(it);
     ++it;
     note.insert(it, nota);
+
+    int old_index = lista->currentRow();
     refreshList();
+    lista->setCurrentRow(old_index);
 }
 
 void NoteWidget::addTag(const ListaNote::Iterator& it) {
@@ -345,7 +348,10 @@ void NoteWidget::addTag(const ListaNote::Iterator& it) {
         temp->push_back(tag);
         (*it).setTag(*temp);
         delete temp;
+
+        int old_index = lista->currentRow();
         refreshList();
+        lista->setCurrentRow(old_index);
     }
 }
 
