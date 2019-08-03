@@ -60,7 +60,7 @@ void SerializzaNote::operator()(const Nota& nota) {
     risultatoSerializzazione.insert("descrizione", nota.getDescrizione());
     auto tagArray = nota.getTag();
     QJsonArray tag;
-    for(auto it = tagArray.cbegin(); it != tagArray.cend(); ++it) {
+    for(auto it = tagArray.constBegin(); it != tagArray.constEnd(); ++it) {
         tag.append(*it);
     }
     risultatoSerializzazione.insert("tag", tag);
@@ -80,7 +80,7 @@ void SerializzaNote::operator()(const Nota& nota) {
     else if(toDoNote) {
         auto toDoRaw = toDoNote->getToDoList();
         QJsonArray toDoList;
-        for(auto it = toDoRaw.cbegin(); it != toDoRaw.cend(); ++it) {
+        for(auto it = toDoRaw.constBegin(); it != toDoRaw.constEnd(); ++it) {
             QJsonObject toDoObj;
             toDoObj.insert("target", (*it).getTarget());
             toDoObj.insert("status", *it ? true : false);
@@ -128,7 +128,7 @@ void DeserializzaNote::operator()(ListaNote& risultato) {
         QString tipo = risultatoSerializzazione["tipo"].toString();
         const auto tagArray = risultatoSerializzazione["tag"].toArray();
         QVector<QString> tag;
-        for(auto it = tagArray.cbegin(); it != tagArray.cend(); ++it) {
+        for(auto it = tagArray.constBegin(); it != tagArray.constEnd(); ++it) {
             tag.push_front((*it).toString());
         }
         if (tipo == "simpleNote") {
@@ -139,7 +139,7 @@ void DeserializzaNote::operator()(ListaNote& risultato) {
         } else if (tipo == "toDoNote") {
             const auto toDoRaw = risultatoSerializzazione["toDoList"].toArray();
             QList<ToDoItem> toDoList;
-            for(auto it = toDoRaw.cbegin(); it != toDoRaw.cend(); ++it) {
+            for(auto it = toDoRaw.constBegin(); it != toDoRaw.constEnd(); ++it) {
                 QJsonObject toDoObj = (*it).toObject();
                 toDoList.push_front(ToDoItem(toDoObj["target"].toString(), toDoObj["status"].toBool()));
             }

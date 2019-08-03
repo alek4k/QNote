@@ -23,16 +23,16 @@ void ToDoListWidget::addEntry(ToDoItem* const it)
     item->setFont(QFont("Arial", 12, QFont::Normal));
 
     //rendo oggetti della lista editabili e con checkbox
-    item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
+    item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
     //attivo o meno il checkbox in base allo stato
     item->setCheckState((*it) ? Qt::Checked : Qt::Unchecked);
 
     //item->setBackground(QColor("#7fc97f"));
 
-    QWidget *w = new QWidget;
+    /*QWidget *w = new QWidget;
     QVBoxLayout *hl = new QVBoxLayout;
     hl->addWidget(new QCheckBox());
-    w->setLayout(hl);
+    w->setLayout(hl);*/
 
     //aggiungo l'oggetto alla lista
     addItem(item);

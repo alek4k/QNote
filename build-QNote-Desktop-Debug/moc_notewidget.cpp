@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_NoteWidget_t {
-    QByteArrayData data[11];
-    char stringdata0[123];
+    QByteArrayData data[13];
+    char stringdata0[157];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -42,13 +42,16 @@ QT_MOC_LITERAL(6, 70, 20), // "ListaNote::Iterator&"
 QT_MOC_LITERAL(7, 91, 5), // "Nota*"
 QT_MOC_LITERAL(8, 97, 6), // "addTag"
 QT_MOC_LITERAL(9, 104, 9), // "imageOpen"
-QT_MOC_LITERAL(10, 114, 8) // "loadFile"
+QT_MOC_LITERAL(10, 114, 8), // "loadFile"
+QT_MOC_LITERAL(11, 123, 16), // "highlightChecked"
+QT_MOC_LITERAL(12, 140, 16) // "QListWidgetItem*"
 
     },
     "NoteWidget\0refreshList\0\0cancellaNota\0"
     "ListaNote::Iterator\0aggiornaNota\0"
     "ListaNote::Iterator&\0Nota*\0addTag\0"
-    "imageOpen\0loadFile"
+    "imageOpen\0loadFile\0highlightChecked\0"
+    "QListWidgetItem*"
 };
 #undef QT_MOC_LITERAL
 
@@ -58,7 +61,7 @@ static const uint qt_meta_data_NoteWidget[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -66,12 +69,13 @@ static const uint qt_meta_data_NoteWidget[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   44,    2, 0x09 /* Protected */,
-       3,    1,   45,    2, 0x09 /* Protected */,
-       5,    2,   48,    2, 0x09 /* Protected */,
-       8,    1,   53,    2, 0x09 /* Protected */,
-       9,    1,   56,    2, 0x09 /* Protected */,
-      10,    2,   59,    2, 0x09 /* Protected */,
+       1,    0,   49,    2, 0x09 /* Protected */,
+       3,    1,   50,    2, 0x09 /* Protected */,
+       5,    2,   53,    2, 0x09 /* Protected */,
+       8,    1,   58,    2, 0x09 /* Protected */,
+       9,    1,   61,    2, 0x09 /* Protected */,
+      10,    2,   64,    2, 0x09 /* Protected */,
+      11,    1,   69,    2, 0x09 /* Protected */,
 
  // slots: parameters
     QMetaType::Void,
@@ -80,6 +84,7 @@ static const uint qt_meta_data_NoteWidget[] = {
     QMetaType::Void, 0x80000000 | 4,    2,
     QMetaType::Void, 0x80000000 | 6,    2,
     QMetaType::Bool, QMetaType::QString, 0x80000000 | 6,    2,    2,
+    QMetaType::Void, 0x80000000 | 12,    2,
 
        0        // eod
 };
@@ -97,6 +102,7 @@ void NoteWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 4: _t->imageOpen((*reinterpret_cast< ListaNote::Iterator(*)>(_a[1]))); break;
         case 5: { bool _r = _t->loadFile((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< ListaNote::Iterator(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
+        case 6: _t->highlightChecked((*reinterpret_cast< QListWidgetItem*(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -131,13 +137,13 @@ int NoteWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 6;
+        _id -= 7;
     }
     return _id;
 }

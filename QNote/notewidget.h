@@ -27,6 +27,7 @@ protected slots:
     void addTag(const ListaNote::Iterator&);
     void imageOpen(ListaNote::Iterator&);
     bool loadFile(const QString&, ListaNote::Iterator&);
+    void highlightChecked(QListWidgetItem*);
 private:
     QPlainTextEdit* const textArea;
     QGridLayout* const layout;

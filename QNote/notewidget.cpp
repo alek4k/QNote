@@ -28,8 +28,15 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     addImgButton->setVisible(false);
     deleteNotaButton->setVisible(false);
     textArea->setReadOnly(true);
+
     //abilito drag and drop sulla ToDoList
-    //todoList->setDragDropMode(QAbstractItemView::InternalMove);
+    todoList->setDragDropMode(QAbstractItemView::InternalMove);
+    //impostazioni grafiche ToDoList
+    todoList->setFocusPolicy(Qt::NoFocus);
+    QPalette p = todoList->palette();
+    p.setColor(QPalette::Highlight, Qt::transparent);
+    p.setColor(QPalette::Active, QPalette::Highlight, Qt::gray);
+    todoList->setPalette(p);
 
     //ACTION SCRITTURA TESTO SU CAMPO DI RICERCA
     connect(searchBar, &QLineEdit::textChanged, [this] () {
@@ -71,20 +78,8 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 
 
     //SALVATAGGIO AUTOMATICO OBIETTIVI TO-DO LIST
-    /*connect(todoList->itemDelegate(), &QAbstractItemDelegate::commitData, [this] () {
-        //mi prendo l'elemento della todolsit modificato e vado a farci updateItem con il text e il checked
-        auto changed = static_cast<ToDoListWidgetItem*>(todoList->currentItem());
-        changed->getToDo()->updateItem(changed->text(), changed->checkState());
-    });*/
-
-
-    connect(todoList, &ToDoListWidget::itemPressed, [this] () {
-        int n = todoList->currentRow();
-        QModelIndex i = todoList->currentIndex();
-        auto changed = static_cast<ToDoListWidgetItem*>(todoList->currentItem());
-        changed->getToDo()->updateItem(changed->text(), changed->checkState() == Qt::Checked ? true : false);
-    });
-
+    connect(todoList, SIGNAL(itemChanged(QListWidgetItem*)),
+                         this, SLOT(highlightChecked(QListWidgetItem*)));
 
     //PRESSIONE PULSANTE ELIMINAZIONE NOTA
     connect(deleteNotaButton, &QToolButton::clicked, [this] () {
@@ -129,10 +124,6 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
         }
     });
 
-    //opzioni grafiche lista note
-    //lista->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );
-    //lista->setAlternatingRowColors(true);
-
     //qualche miglioria grafica per l'area di testo
     textArea->setStyleSheet("QPlainTextEdit { "
                                "padding-left:20; "
@@ -142,12 +133,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                                "background-color: white}"
                                );
 
-    image = new QPixmap(QPixmap::fromImage(QImage("cliors.jpg")));
-
-    // set a scaled pixmap to a w x h window keeping its aspect ratio
-
     imageLabel->setAlignment(Qt::AlignCenter);
-
 
     //settings campo di ricerca
     searchBar->setPlaceholderText("Tutte le note...");
@@ -156,7 +142,6 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     addNotaButton->setIcon(QIcon("addNota.png"));
     //addNotaButton->setIconSize(QSize(20, 20));
     addNotaButton->setToolTip("Nuova nota");
-
 
     addImgButton->setIcon(QIcon("addPicture.png"));
     addImgButton->setToolTip("Aggiungi immagine");
@@ -232,21 +217,10 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 
             auto imgNota = dynamic_cast<ImgNote*>(&t);
             if (imgNota) {
-                /*QByteArray arr;
-                arr.append(imgNota->getImage());
-                QByteArray bytes = QByteArray::fromBase64(arr, QByteArray::Base64UrlEncoding);
-                imageLabel->setPixmap(QPixmap::fromImage(QImage::fromData(bytes, "PNG")).scaled(400,400,Qt::KeepAspectRatio));
-*/
-
-                //imageLabel->setPixmap((*image).scaled(400,400,Qt::KeepAspectRatio));
-
-
                 QImage img;
                 //img.loadFromData(QByteArray::fromBase64(imgNota->getImage().toStdString().c_str()));
                 img.loadFromData(QByteArray::fromBase64(imgNota->getImage().toLocal8Bit()));
                 imageLabel->setPixmap(QPixmap::fromImage(img).scaled(400, 400, Qt::KeepAspectRatio));
-
-
 
                 colonnaDx->removeWidget(textArea);
                 colonnaDx->addWidget(imageLabel);
@@ -295,6 +269,16 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 
     //carico tutte le note nella lista
     refreshList();
+}
+
+void NoteWidget::highlightChecked(QListWidgetItem *item){
+    auto changed = static_cast<ToDoListWidgetItem*>(item);
+    changed->getToDo()->updateItem(changed->text(), changed->checkState() == Qt::Checked ? true : false);
+
+    if(item->checkState() == Qt::Checked)
+        item->setBackground(QColor("#ffffb2"));
+    else
+        item->setBackground(QColor("#ffffff"));
 }
 
 void NoteWidget::refreshList() const{
