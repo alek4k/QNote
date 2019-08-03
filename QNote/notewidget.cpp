@@ -11,10 +11,10 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       searchBar(new QLineEdit),
       image(new QPixmap),
       imageLabel(new QLabel),
-      colonnaSx(new QVBoxLayout(this)),
-      colonnaDx(new QVBoxLayout(this)),
-      barraTopLeft(new QGridLayout(this)),
-      barraTopRight(new QGridLayout(this)),
+      colonnaSx(new QVBoxLayout()),
+      colonnaDx(new QVBoxLayout()),
+      barraTopLeft(new QGridLayout()),
+      barraTopRight(new QGridLayout()),
       addNotaButton(new QToolButton),
       deleteNotaButton(new QToolButton),
       addImgButton(new QToolButton),
@@ -163,7 +163,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     barraTopRight->addWidget(addTagButton, 0, 0);
     barraTopRight->addWidget(addImgButton, 0, 1);
     barraTopRight->addWidget(addToDoListButton, 0, 2);
-    barraTopRight->addWidget(nullptr, 0, 3);
+    //barraTopRight->addWidget(nullptr, 0, 3);
     barraTopRight->addWidget(deleteNotaButton, 0, 4);
     barraTopRight->setAlignment(Qt::AlignRight);
     barraTopRight->setColumnMinimumWidth(3, 35);
