@@ -36,15 +36,14 @@ void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
     hl->addWidget(l);*/
 
     //title
-    QLabel* title = new QLabel(it->getTitolo());
-    title->setFont(QFont("Arial", 12, QFont::Normal));
+    //QLabel* title = new QLabel(it->getTitolo());
+    //title->setFont(QFont("Arial", 12, QFont::Normal));
     //hl->addWidget(title);
 
     //tag
     QLabel* tags = new QLabel("");
     //hl->addWidget(new QLabel("test"));
     for (int i = 0; i < it->getTag().length(); i++) {
-        QString temp = it->getTag()[i];
         if (i==0)
             tags->setText(it->getTag()[i]);
         else
@@ -62,9 +61,18 @@ void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
     w->setLayout(hl);
 
     QListWidgetItem *item = new NoteListWidgetItem(it);
-    item->setText((*it).getTitolo());
-    item->setFont(QFont("Arial", 12, QFont::Normal));
 
+    auto toDoNoteInsert = dynamic_cast<const ToDoNote*>(&(*it));
+    if (toDoNoteInsert) {
+        unsigned int completed = toDoNoteInsert->targetCompletati();
+        int tot = toDoNoteInsert->getToDoList().size();
+        item->setText((*it).getTitolo() +
+                      " ("+QString::number(completed)+"/"+QString::number(tot)+")");
+    }
+    else {
+        item->setText((*it).getTitolo());
+    }
+    item->setFont(QFont("Arial", 12, QFont::Normal));
 
     addItem(item);
 

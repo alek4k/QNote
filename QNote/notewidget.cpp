@@ -163,7 +163,6 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     barraTopRight->addWidget(addTagButton, 0, 0);
     barraTopRight->addWidget(addImgButton, 0, 1);
     barraTopRight->addWidget(addToDoListButton, 0, 2);
-    //barraTopRight->addWidget(nullptr, 0, 3);
     barraTopRight->addWidget(deleteNotaButton, 0, 4);
     barraTopRight->setAlignment(Qt::AlignRight);
     barraTopRight->setColumnMinimumWidth(3, 35);
@@ -172,25 +171,12 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     colonnaSx->addWidget(lista);
     layout->addLayout(colonnaSx, 0, 0);
 
-    //colonnaDx->addWidget(imageLabel);
     colonnaDx->addLayout(barraTopRight);
     colonnaDx->addWidget(textArea);
     layout->addLayout(colonnaDx, 0, 1);
 
-/*
-    //carico componenti nella grid-layout
-    layout->addWidget(searchBar, 0, 0);
-    layout->addWidget(lista, 1, 0);
-    //layout->addWidget(textArea, 0, 1, 1, 0);
-    layout->addWidget(textArea, 1, 1);
-    layout->addWidget(imageLabel, 0, 1);
-*/
-    //layout->addWidget(textEdit, 2, 2);
     layout->setColumnStretch(0, 10);
     layout->setColumnStretch(1, 20);
-
-    //layout->addLayout(colonnaSx,0,0);
-
 
     //CAMBIO SELEZIONE NOTA DALLA LISTA
     connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
@@ -239,7 +225,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                 todoList->clear();
                 auto currentToDoList = static_cast<ToDoNote*>(&t)->getToDoList();
 
-                //todoList->addEntry(new ToDoItem("Inserisci obiettivo..."));
+                todoList->addEntry(new ToDoItem("Inserisci obiettivo..."));
                 for (auto it = currentToDoList.cbegin(); it != currentToDoList.cend(); ++it) {
                     todoList->addEntry(&const_cast<ToDoItem&>(*it));
                 }
@@ -273,12 +259,40 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
 
 void NoteWidget::highlightChecked(QListWidgetItem *item){
     auto changed = static_cast<ToDoListWidgetItem*>(item);
-    changed->getToDo()->updateItem(changed->text(), changed->checkState() == Qt::Checked ? true : false);
+    auto items = lista->selectedItems();
+    int row = todoList->row(item);
 
-    if(item->checkState() == Qt::Checked)
-        item->setBackground(QColor("#ffffb2"));
-    else
-        item->setBackground(QColor("#ffffff"));
+    if(items.length() == 1) {
+        ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+        if (changed->text().length() == 0) {
+            /* il testo è stato rimosso, quindi elimino l'obiettivo corrente;
+             * all'indice 0 c'è il ToDo di default per creare un nuovo obiettivo: in quel caso evito!
+             */
+            if (row != 0) {
+                auto old_list = static_cast<ToDoNote&>(*it).getToDoList();
+                //rimuovo tenendo conto del todo di default all'indice 0
+                old_list.removeAt(row - 1);
+                static_cast<ToDoNote&>(*it).setToDoList(old_list);
+            }
+        }
+        else {
+            if (row == 0) {
+                //devo creare il todoItem e aggiungerlo alla lista di obiettivi
+                auto old_list = static_cast<ToDoNote&>(*it).getToDoList();
+                old_list.push_front(ToDoItem(changed->text(), changed->checkState() == Qt::Checked ? true : false));
+                static_cast<ToDoNote&>(*it).setToDoList(old_list);
+            }
+            else {
+                //normale modifica di testo o checkbox su un item già esistente
+                changed->getToDo()->updateItem(changed->text(), changed->checkState() == Qt::Checked ? true : false);
+            }
+        }
+
+        //refresh nota corrente
+        int old_index = lista->currentRow();
+        refreshList();
+        lista->setCurrentRow(old_index);
+    }
 }
 
 void NoteWidget::refreshList() const{

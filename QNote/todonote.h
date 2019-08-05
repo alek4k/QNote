@@ -23,7 +23,7 @@ public:
 
     void setToDoList(const QList<ToDoItem>&) noexcept;
 
-    int targetCompletati() const noexcept;
+    unsigned int targetCompletati() const noexcept;
 };
 
 #endif // TODOLIST_H
