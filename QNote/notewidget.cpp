@@ -4,7 +4,7 @@
 #include "todonote.h"
 using std::string;
 
-NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
+NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     : QWidget(parent),
       textArea(new QPlainTextEdit),
       layout(new QGridLayout(this)),
@@ -21,7 +21,8 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       addTagButton(new QToolButton),
       todoList(new ToDoListWidget(this)),
       note(note),
-      lista(new NoteListWidget(this))
+      lista(new NoteListWidget(this)),
+      path(percorsoFile)
 {
     addToDoListButton->setVisible(false);
     addImgButton->setVisible(false);
@@ -69,6 +70,8 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
             QString testo = textArea->toPlainText();
             QString descrizione = testo.mid(titolo.length()+1,testo.length()-titolo.length());
             static_cast<NoteListWidgetItem*>(items[0])->getNota()->setDescrizione(descrizione);
+
+            quickSave();
         }
     });
 
@@ -89,6 +92,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     //PRESSIONE PULSANTE CREAZIONE NOTA
     connect(addNotaButton, &QToolButton::clicked, [this] () {
         this->note.push_front(new SimpleNote("Nuova nota..."));
+        quickSave();
         refreshList();
     });
 
@@ -287,6 +291,7 @@ void NoteWidget::highlightChecked(QListWidgetItem *item){
 
         //refresh nota corrente
         int old_index = lista->currentRow();
+        quickSave();
         refreshList();
         lista->setCurrentRow(old_index);
     }
@@ -311,6 +316,7 @@ void NoteWidget::cancellaNota(const ListaNote::Iterator& it) {
                                 QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
             note.remove(it);
+            quickSave();
             refreshList();
     }
 }
@@ -321,6 +327,7 @@ void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     note.insert(it, nota);
 
     int old_index = lista->currentRow();
+    quickSave();
     refreshList();
     lista->setCurrentRow(old_index);
 }
@@ -345,6 +352,7 @@ void NoteWidget::addTag(const ListaNote::Iterator& it) {
         delete temp;
 
         int old_index = lista->currentRow();
+        quickSave();
         refreshList();
         lista->setCurrentRow(old_index);
     }
@@ -405,4 +413,13 @@ void NoteWidget::imageOpen(ListaNote::Iterator& it) {
 
     //tengo aperto il dialog fino a quando l'utente non lo chiude o inserisce un file valido
     while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().first(), it)) {}
+}
+
+void NoteWidget::quickSave() const {
+    SerializzaNote serializzatore(path);
+    note.serializza(serializzatore);
+}
+
+void NoteWidget::setPath(QString& percorsoFile) {
+    path = percorsoFile;
 }

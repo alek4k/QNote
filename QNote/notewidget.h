@@ -17,9 +17,9 @@ class NoteWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit NoteWidget(ListaNote& note, QWidget *parent = nullptr);
+    explicit NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent = nullptr);
     virtual ~NoteWidget() = default;
-
+    void setPath(QString& percorsoFile);
 protected slots:
     void refreshList() const;
     void cancellaNota(const ListaNote::Iterator&);
@@ -48,6 +48,9 @@ private:
 
     NoteListWidget* lista;
 
+    QString path;
+
+    void quickSave() const;
 };
 
 #endif // NOTEWIDGET_H

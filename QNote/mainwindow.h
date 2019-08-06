@@ -32,8 +32,7 @@ private slots:
     void importNote();
     void exportNote();
     void exit();
-
-    //void createMenu();
+    void load();
 };
 
 #endif // MAINWINDOW_H
