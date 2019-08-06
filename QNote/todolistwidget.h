@@ -13,7 +13,7 @@ private:
     QList<ToDoItem>* toDoList;
 public:
     ToDoListWidget(QWidget *parent = nullptr);
-    void addEntry(ToDoItem* const item);
+    void addEntry(ToDoItem* item);
 };
 
 class ToDoListWidgetItem : public QListWidgetItem
@@ -21,7 +21,7 @@ class ToDoListWidgetItem : public QListWidgetItem
 friend class ToDoListWidget;
 private:
     ToDoItem* item;
-    ToDoListWidgetItem(ToDoItem* const item);
+    ToDoListWidgetItem(ToDoItem* item);
 public:
     ToDoItem* getToDo() const;
 };

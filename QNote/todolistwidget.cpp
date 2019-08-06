@@ -5,8 +5,8 @@ ToDoListWidget::ToDoListWidget(QWidget *parent) : QListWidget(parent)
     setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
-ToDoListWidgetItem::ToDoListWidgetItem(ToDoItem* const item)
-    : QListWidgetItem(), item(item) {
+ToDoListWidgetItem::ToDoListWidgetItem(ToDoItem* item)
+    : item(item) {
     setText(item->getTarget());
     //setCheckState((*item) ? Qt::Checked : Qt::Unchecked);
 }
@@ -16,7 +16,7 @@ ToDoItem* ToDoListWidgetItem::getToDo() const
     return item;
 }
 
-void ToDoListWidget::addEntry(ToDoItem* const it)
+void ToDoListWidget::addEntry(ToDoItem* it)
 {
     QListWidgetItem *item = new ToDoListWidgetItem(it);
     //item->setText(it.getTarget());

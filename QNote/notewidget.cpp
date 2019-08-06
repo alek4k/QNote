@@ -9,7 +9,6 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
       textArea(new QPlainTextEdit),
       layout(new QGridLayout(this)),
       searchBar(new QLineEdit),
-      image(new QPixmap),
       imageLabel(new QLabel),
       colonnaSx(new QVBoxLayout()),
       colonnaDx(new QVBoxLayout()),
@@ -56,10 +55,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
     //SALVATAGGIO AUTOMATICO SCRITTURA DESCRIZIONE NOTA
     connect(textArea, &QPlainTextEdit::textChanged, [this] () {
         auto items = lista->selectedItems();
-        if (items.length() != 1) {
-            return;
-        }
-        else {
+        if (items.length() == 1) {
             //la prima riga diventa il titolo della nota
             QTextDocument *doc = (*textArea).document();
             QTextBlock firstRow = doc->findBlockByLineNumber(0);
@@ -225,6 +221,7 @@ NoteWidget::NoteWidget(ListaNote& note, QWidget *parent)
                 todoList->clear();
                 auto currentToDoList = static_cast<ToDoNote*>(&t)->getToDoList();
 
+                //TODO: memory leak!
                 todoList->addEntry(new ToDoItem("Inserisci obiettivo..."));
                 for (auto it = currentToDoList.cbegin(); it != currentToDoList.cend(); ++it) {
                     todoList->addEntry(&const_cast<ToDoItem&>(*it));
@@ -386,8 +383,6 @@ bool NoteWidget::loadFile(const QString& fileName, ListaNote::Iterator& it)
                                  .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
         return false;
     }
-
-    image = new QPixmap(QPixmap::fromImage(QImage(fileName)));
 
     QPixmap pixmap = QPixmap::fromImage(QImage(fileName));
     QByteArray bytes;

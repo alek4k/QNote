@@ -32,7 +32,6 @@ private:
     QPlainTextEdit* const textArea;
     QGridLayout* const layout;
     QLineEdit* const searchBar;
-    QPixmap* image;
     QLabel* const imageLabel;
     QVBoxLayout* const colonnaSx;
     QVBoxLayout* const colonnaDx;

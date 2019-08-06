@@ -30,8 +30,7 @@ private:
         Nodo& operator = (const Nodo&) = delete;
 
         ~Nodo() {
-            if (info)
-                delete info;
+            delete info;
         }
 
         friend class Container;

@@ -17,7 +17,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow() = default;
 private:
-    QIcon * const icon;
+    QIcon icon;
 
     QMenu * const fileMenu;
     QAction * const importa;

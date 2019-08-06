@@ -16,7 +16,7 @@ Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
 
 void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
     QWidget *w = new QWidget;
-    QVBoxLayout *hl = new QVBoxLayout;
+    auto *hl = new QVBoxLayout;
 
     //color
     /*QPixmap pm(10,10);

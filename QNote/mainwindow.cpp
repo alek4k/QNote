@@ -13,7 +13,7 @@ using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      icon(new QIcon("QNote.ico")),
+      icon(QIcon("QNote.ico")),
       fileMenu(menuBar()->addMenu("&File")),
       importa(new QAction(this)),
       esporta(new QAction(this)),
@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainWidget = new NoteWidget(list, this);
 
     // Impostazioni finestra
-    setWindowIcon(*icon);
+    setWindowIcon(icon);
     setWindowTitle("QNote - Gestore di note");
     resize(900, 650);
 
@@ -71,10 +71,10 @@ void MainWindow::exit() {
 
 void MainWindow::importNote() {
     QString fileName = QFileDialog::getOpenFileName(this,
-            tr("&Open..."), "",
+            tr("Importa..."), "",
             tr("Note JSON (*.json);;All Files (*)"));
 
-    // L'utente ha premuto su annulla e io non faccio nulla...
+    // L'utente ha premuto su annulla
     if (fileName.isEmpty()) return;
 
     // Verifico che il file sia corretto e se lo è lo imposto come file corrente
@@ -120,7 +120,7 @@ void MainWindow::importNote() {
 
 void MainWindow::exportNote() {
     QString fileName = QFileDialog::getSaveFileName(this,
-                                 tr("&Save As..."), "", tr("Note JSON (*.json)"));
+                                 tr("Esporta..."), "", tr("Note JSON (*.json)"));
 
     // L'utente ha premuto annulla...
     if (fileName.isEmpty()) return;
@@ -136,8 +136,8 @@ void MainWindow::exportNote() {
         QString messaggio("Sono state correttamente salvate ");
         messaggio += QString::number(list.count()) + " note";
 
-        messageBox.information(0, "Note salvate con successo", messaggio);
+        messageBox.information(nullptr, "Note salvate con successo", messaggio);
     } catch (const SerializeException& ex) {
-        messageBox.critical(0, "Errore nel salvataggio delle note", ex.what());
+        messageBox.critical(nullptr, "Errore nel salvataggio delle note", ex.what());
     }
 }
