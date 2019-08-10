@@ -242,7 +242,7 @@ public:
     }
 
     virtual ~Container() {
-        while(!empty()) remove(begin());
+        /*while(!empty()) remove(begin());*/
     }
 
     bool empty() const noexcept {
@@ -259,7 +259,7 @@ public:
         item = item->clone();
 
         if (!first) {
-            first = new Nodo(item->clone(), nullptr, nullptr);
+            first = new Nodo(item, nullptr, nullptr);
             return;
         }
 
@@ -278,7 +278,7 @@ public:
         item = item->clone();
 
         if (!first) {
-            push_front(item);
+            first = new Nodo(item, nullptr, nullptr);
             return;
         }
 
