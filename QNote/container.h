@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <utility>
+
 template <typename T>
 class Container {
 public:
@@ -27,7 +29,7 @@ private:
 
         Nodo(const Nodo&) = delete;
 
-        Nodo& operator = (const Nodo&) = delete;
+        Nodo& operator=(const Nodo&) = delete;
 
         ~Nodo() {
             delete info;
@@ -36,6 +38,36 @@ private:
         friend class Container;
         friend class Iterator;
     };
+
+    static Nodo* clone(Nodo* src) noexcept {
+        Nodo* first = src;
+        if (!first) return nullptr;
+
+        int currentIndex = 0;
+        while(first->previous) {
+            first = first->previous;
+            currentIndex -= 1;
+        }
+
+        Nodo* lista = nullptr;
+        Nodo* result = lista;
+        while (first) {
+            Nodo* temp = new Nodo(first->info->clone(), lista, nullptr);
+
+            if(!lista)
+                lista = temp;
+            else
+                lista->next = temp;
+
+            if(currentIndex == 0) result = lista;
+            currentIndex += 1;
+
+            lista = lista->next;
+            first = first->next;
+        }
+
+         return result;
+    }
 
     Nodo* first;
 public:
@@ -49,7 +81,10 @@ public:
         virtual bool operator()(const T&) const { return true; }
 
         // Implementa l'ordine dei risultati di ricerca
-        virtual Container<const Iterator> getResults(Container<const Iterator>& risultatiDisordinati) const {
+        virtual Container<const Iterator> getResults(Container<const Iterator> &/*&*/ risultatiDisordinati) const {
+            auto daRiordinare = Container<const Iterator>(
+                        /*std::move(*/risultatiDisordinati/*)*/);
+            //return daRiordinare;
             return risultatiDisordinati;
         }
     };
@@ -59,11 +94,11 @@ public:
         for (auto it = begin(); it != end(); ++it) // ci sono elementi
         {
             if (cr(*it))
-                risultatiInDisordine.push_front(it);
+                risultatiInDisordine.push_back(it.clone());
         }
 
-        //return cr.getResults(risultatiInDisordine);
-        return risultatiInDisordine;
+        //return risultatiInDisordine;
+        return cr.getResults(/*std::move(*/risultatiInDisordine/*)*/);
     }
 
     class Serializzazione {
@@ -91,21 +126,12 @@ public:
 
     class Iterator {
         friend class Container;
+        friend class Nodo;
     private:
         Nodo* nodo;
 
         Iterator(Nodo* nodo = nullptr) noexcept
             : nodo(nodo) {}
-
-        /*void destroy() const noexcept {
-            if (!nodo)
-                return;
-            if (nodo->previous)
-                nodo->previous->next = nodo->next;
-            if (nodo->next)
-                nodo->next->previous = nodo->previous;
-            delete nodo;
-        }*/
     public:
         Iterator(const Iterator& it) noexcept
             : nodo(it.nodo) {}
@@ -140,14 +166,18 @@ public:
         T* operator->() const noexcept {
             return nodo->info;
         }
+
+        Iterator* clone() const noexcept {
+            return new Iterator(nodo);
+        }
     };
 
     class ConstIterator {
         friend class Container;
     private:
-        Nodo* nodo;
+        const Nodo* nodo;
 
-        ConstIterator(Nodo* nodo = nullptr) noexcept
+        ConstIterator(const Nodo* const nodo = nullptr) noexcept
             : nodo(nodo) {}
     public:
         ConstIterator(const ConstIterator& it) noexcept
@@ -180,6 +210,10 @@ public:
             return *(nodo->info);
         }
 
+        ConstIterator* clone() const noexcept {
+            return new ConstIterator(nodo);
+        }
+
         const T* operator->() const noexcept {
             return nodo->info;
         }
@@ -190,15 +224,30 @@ public:
     };
 
     Container() noexcept : first(nullptr) {}
-    Container(const Container<T>&) noexcept = default;
 
-    virtual ~Container() {
-        while(first)
-            remove(begin());
+    Container(Container<T>&& move) noexcept : first(move.first) {
+        move.first = nullptr;
     }
 
-    void restore(Container<T>& other) noexcept {
-        first = other.first;
+    Container(const Container<T>& src) noexcept : first(clone(src.first)) {}
+
+    Container& operator=(const Container<T>& src) {
+        if (this != &src) {
+            first = clone(src.first);
+        }
+
+        return *this;
+    }
+
+    void swap(Container<T>& other) noexcept {
+        auto firstTemp = this->first;
+
+        this->first = other.first;
+        other.first = firstTemp;
+    }
+
+    virtual ~Container() {
+        while(!empty()) remove(begin());
     }
 
     bool empty() const noexcept {
@@ -210,6 +259,13 @@ public:
     }
 
     void push_front(T* item) {
+        if (!first) {
+            first = new Nodo(item->clone(), nullptr, nullptr);
+            return;
+        }
+
+        while (first->previous) first = first->previous;
+
         first = new Nodo(item, nullptr, first);
     }
 
@@ -218,14 +274,14 @@ public:
     }
 
     void push_back(T* item) {
-        if (!first) push_front(item);
-        else {
-            Nodo* temp = first;
-            while (temp->next)
-                temp = temp->next;
-
-            temp = new Nodo(item, temp, nullptr);
+        if (!first) {
+            push_front(item);
+            return;
         }
+
+        Nodo* ultimo = first;
+        while (ultimo->next) ultimo = ultimo->next;
+        ultimo->next = new Nodo(item->clone(), ultimo, nullptr);
     }
 
     int count() const {
@@ -255,22 +311,19 @@ public:
     void remove(const Iterator& it) noexcept {
         if (!it.nodo) return;
 
-        if (it.nodo == first) {
-            Nodo* temp = first;
+        auto toRemove = it.nodo;
+        if (toRemove == first) {
             first = first->next;
-            if (first) {
-                first->previous = nullptr;
-            }
-            delete temp;
+            if (first) first->previous = toRemove->previous;
             return;
+        } else {
+            if (toRemove->next) {
+                if (toRemove->previous) toRemove->previous->next = toRemove->next;
+                if (toRemove->next) toRemove->next->previous = toRemove->previous;
+            }
         }
 
-        if (it.nodo->previous)
-            it.nodo->previous->next = it.nodo->next;
-        if (it.nodo->next)
-            it.nodo->next->previous = it.nodo->previous;
-        delete it.nodo;
-        //it.destroy();
+        delete toRemove;
     }
 
     //brasa tutto
@@ -284,7 +337,7 @@ public:
     }
 
     Iterator end() noexcept {
-        return Iterator();
+        return Iterator(nullptr);
     }
 
     ConstIterator cbegin() const noexcept {
@@ -292,7 +345,7 @@ public:
     }
 
     ConstIterator cend() const noexcept {
-        return ConstIterator();
+        return ConstIterator(nullptr);
     }
 };
 

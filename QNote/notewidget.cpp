@@ -47,7 +47,7 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
         }
 
         lista->clear();
-        Container<const ListaNote::Iterator> queryResult = this->note.simpleSearch(RicercaTesto(QString(lookingFor)));
+        auto queryResult = this->note.simpleSearch(RicercaTesto(QString(lookingFor)));
         for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
             lista->addEntry(*it);
         }
@@ -225,7 +225,6 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
                 todoList->clear();
                 auto currentToDoList = static_cast<ToDoNote*>(&t)->getToDoList();
 
-                //TODO: memory leak!
                 todoList->addEntry(new ToDoItem("Inserisci obiettivo..."));
                 for (auto it = currentToDoList.cbegin(); it != currentToDoList.cend(); ++it) {
                     todoList->addEntry(&const_cast<ToDoItem&>(*it));
@@ -256,6 +255,11 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
 
     //carico tutte le note nella lista
     refreshList();
+}
+
+NoteWidget::~NoteWidget() {
+    const auto & sentinella = todoList->item(0);
+    delete sentinella;
 }
 
 void NoteWidget::highlightChecked(QListWidgetItem *item){
@@ -303,6 +307,10 @@ void NoteWidget::refreshList() const{
     imageLabel->clear();
     todoList->clear();
 
+    //auto queryResult = this->note.simpleSearch(VisualizzazioneOrdinata());
+    /*for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
+        lista->addEntry(*it);
+    }*/
     for (auto it = note.begin(); it != note.end(); ++it) {
         lista->addEntry(it);
     }

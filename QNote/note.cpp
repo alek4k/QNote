@@ -1,8 +1,25 @@
 #include "note.h"
 
-//VisualizzazioneOrdinata
 Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
-    return risultatiDisordinati;
+    auto daRiordinare = Container<const ListaNote::Iterator>(/*std::move(*/risultatiDisordinati/*)*/);
+    Container<const ListaNote::Iterator> riordinati;
+
+    while (!daRiordinare.empty()) {
+        ListaNote::Iterator maggiore = *(daRiordinare.begin());
+        auto daje = daRiordinare.begin();
+        for (auto it = daRiordinare.begin(); it != daRiordinare.end(); ++it) {
+            if ((*it)->getDataModifica() > maggiore->getDataModifica()) {
+                maggiore = *it;
+                daje = it;
+            }
+
+            riordinati.push_back(maggiore.clone());
+            daRiordinare.remove(daje);
+        }
+    }
+
+
+    return riordinati;
 }
 
 //RicercaTesto
@@ -25,10 +42,6 @@ bool RicercaTesto::operator() (const Nota& elemento) const {
     if (rx.exactMatch(elemento.getTitolo())) return true;
 
     return false;
-}
-
-Container<const ListaNote::Iterator> RicercaTesto::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
-    return risultatiDisordinati;
 }
 
 SerializeException::SerializeException(const std::string& msg) noexcept

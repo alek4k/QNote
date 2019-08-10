@@ -16,9 +16,9 @@ typedef Container<Nota> ListaNote;
 
 class VisualizzazioneOrdinata : public ListaNote::Ricerca {
 public:
-    virtual ~VisualizzazioneOrdinata() = default;
+    Container<const ListaNote::Iterator> getResults(Container<const ListaNote::Iterator> & risultatiDisordinati) const override;
 
-    Container<const ListaNote::Iterator> getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const override;
+    virtual ~VisualizzazioneOrdinata() = default;
 };
 
 class RicercaTesto : public ListaNote::Ricerca {
@@ -28,8 +28,6 @@ public:
     virtual ~RicercaTesto() = default;
 
     virtual bool operator() (const Nota& elemento) const final;
-
-    Container<const ListaNote::Iterator> getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const override;
 private:
     QString text;
 };

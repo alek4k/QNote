@@ -18,7 +18,7 @@ class NoteWidget : public QWidget
     Q_OBJECT
 public:
     explicit NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent = nullptr);
-    virtual ~NoteWidget() = default;
+    ~NoteWidget() override;
     void setPath(QString& percorsoFile);
 protected slots:
     void refreshList() const;

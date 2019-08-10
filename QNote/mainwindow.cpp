@@ -20,8 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
       quit(new QAction(this)),
       percorsoFile("qNote.json")
 {
-
-
     // Impostazioni finestra
     setWindowIcon(icon);
     setWindowTitle("QNote - Gestore di note");
@@ -49,13 +47,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(quit, SIGNAL(triggered()), this, SLOT(exit()));
     fileMenu->addAction(quit);
 
-    list.push_back(new SimpleNote("QNote", "Con QNote puoi organizzare le tue note, aggiungendo tag, immagini e liste di obiettivi!"));
-    mainWidget = new NoteWidget(list, percorsoFile, this);
-
-    // Imposto il widget principale sulla finestra
-    setCentralWidget(mainWidget);    
-
     load();
+    if (list.empty()) {
+        list.push_back(new SimpleNote("QNote", "Con QNote puoi organizzare le tue note, aggiungendo tag, immagini e liste di obiettivi!"));
+        mainWidget = new NoteWidget(list, percorsoFile, this);
+
+        // Imposto il widget principale sulla finestra
+        setCentralWidget(mainWidget);
+    }
+
+
 }
 
 void MainWindow::exit() {
@@ -66,24 +67,11 @@ void MainWindow::load() {
     // Carico il file selezionato dall'utente
     try {
         DeserializzaNote lettoreNote(percorsoFile);
-        ListaNote risultatoDeserializzazione = ListaNote::deserializza(lettoreNote);
-        list.erase();
+        ListaNote risultatoDeserializzazione(
+                    /*std::move(*/ListaNote::deserializza(lettoreNote/*)*/));
+        list.swap(risultatoDeserializzazione);
         //list.restore(risultatoDeserializzazione);
-        //TODO: cambiare sta schifezza!!!
-        for (auto it = risultatoDeserializzazione.cbegin(); it != risultatoDeserializzazione.cend(); ++it){
-            auto simpleNote = dynamic_cast<const SimpleNote*>(&(*it));
-            auto toDoNote = dynamic_cast<const ToDoNote*>(&(*it));
-            auto imgNote = dynamic_cast<const ImgNote*>(&(*it));
-            if (simpleNote) {
-                list.push_back(new SimpleNote(*simpleNote));
-            }
-            else if (toDoNote) {
-                list.push_back(new ToDoNote(*toDoNote));
-            }
-            else if (imgNote) {
-                list.push_back(new ImgNote(*imgNote));
-            }
-        }
+
 
         QWidget *theWidget = centralWidget();
         mainWidget = new NoteWidget(list, percorsoFile, this);
@@ -91,7 +79,7 @@ void MainWindow::load() {
         theWidget->deleteLater();
     } catch (const DeserializeException& ex) {
         QMessageBox messageBox;
-        messageBox.critical(nullptr, "Impossibile ripristinare le note", ex.what());
+        messageBox.critical(nullptr, "Impossibile caricare le note", ex.what());
     }
 }
 
@@ -100,7 +88,7 @@ void MainWindow::importNote() {
             tr("Importa..."), "",
             tr("Note JSON (*.json);;All Files (*)"));
 
-    // L'utente ha premuto su annulla
+    // Viene premuto annulla... non faccio niente
     if (fileName.isEmpty()) return;
 
     // Verifico che il file sia corretto e se lo è lo imposto come file corrente
@@ -110,7 +98,6 @@ void MainWindow::importNote() {
 
         load();
     } else { // Se il file non è valido
-        // Mostro un messaggio di errore...
         QMessageBox message;
         message.warning(nullptr, "File non valido", "E' stato selezionato un file non valido");
     }
@@ -120,10 +107,10 @@ void MainWindow::exportNote() {
     QString fileName = QFileDialog::getSaveFileName(this,
                                  tr("Esporta..."), "", tr("Note JSON (*.json)"));
 
-    // L'utente ha premuto annulla...
+    // Viene premuto annulla... non faccio niente
     if (fileName.isEmpty()) return;
 
-    // Cambio il percorso del file attualmente utilizzato
+    // Aggiorno il path attualmente in utilizzo
     percorsoFile = fileName;
 
     QMessageBox messageBox;
@@ -132,11 +119,11 @@ void MainWindow::exportNote() {
         list.serializza(serializzatore);
         mainWidget->setPath(percorsoFile);
 
-        QString messaggio("Sono state correttamente salvate ");
+        QString messaggio("Sono state esportate ");
         messaggio += QString::number(list.count()) + " note";
 
         messageBox.information(nullptr, "Note salvate con successo", messaggio);
     } catch (const SerializeException& ex) {
-        messageBox.critical(nullptr, "Errore nel salvataggio delle note", ex.what());
+        messageBox.critical(nullptr, "Errore durante l'esportazione delle note", ex.what());
     }
 }
