@@ -1,0 +1,7 @@
+*.o
+*.exe
+*.lib
+*.a
+*.dylib
+*.dll
+*_moc*
