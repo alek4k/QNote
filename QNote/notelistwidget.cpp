@@ -1,22 +1,21 @@
 #include "notelistwidget.h"
 #include "container.h"
 
-NoteListWidget::NoteListWidget(QWidget* parent) : QListWidget(parent) {
+NoteListWidget::NoteListWidget(QWidget* parent) : QListWidget(parent), w(new QWidget(this)), tags(new QLabel(this)), hl(new QVBoxLayout(this)) {
     //permetto la selezione di una sola nota per volta (niente combo Ctrl/Shift)
     setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
-NoteListWidgetItem::NoteListWidgetItem(const Container<Nota>::Iterator& it)
-    : QListWidgetItem(), it(it) {}
+NoteListWidgetItem::NoteListWidgetItem(QListWidget * parent, const Container<Nota>::Iterator& it)
+    : QListWidgetItem(parent), it(it) {}
 
 
 Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
     return it;
 }
 
-void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
-    QWidget *w = new QWidget;
-    auto *hl = new QVBoxLayout;
+void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
+    if (!it.isValid()) return;
 
     //color
     /*QPixmap pm(10,10);
@@ -41,8 +40,10 @@ void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
     //hl->addWidget(title);
 
     //tag
-    QLabel* tags = new QLabel("");
+
     //hl->addWidget(new QLabel("test"));
+
+    tags->setText("");
     for (int i = 0; i < it->getTag().length(); i++) {
         if (i==0)
             tags->setText(it->getTag()[i]);
@@ -50,6 +51,8 @@ void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
             tags->setText(tags->text() + ", " + it->getTag()[i]);
     }
     tags->setStyleSheet("margin-left: 10px; margin-top:25px;");
+
+
     //tags->show();
     //tags->resize(100,100);
     QFont f( "Arial", 10, QFont::Light);
@@ -60,23 +63,20 @@ void NoteListWidget::addEntry(const Container<Nota>::Iterator& it) {
 
     w->setLayout(hl);
 
-    QListWidgetItem *item = new NoteListWidgetItem(it);
+    QListWidgetItem *item = new NoteListWidgetItem(this, it);
 
-    auto toDoNoteInsert = dynamic_cast<const ToDoNote*>(&(*it));
-    if (toDoNoteInsert) {
+    QString titolo = (*it).getTitolo();
+    if (auto toDoNoteInsert = dynamic_cast<const ToDoNote*>(&(*it))) {
         unsigned int completed = toDoNoteInsert->targetCompletati();
         int tot = toDoNoteInsert->getToDoList().size();
-        item->setText((*it).getTitolo() +
-                      " ("+QString::number(completed)+"/"+QString::number(tot)+")");
+        titolo += " ("+QString::number(completed)+"/"+QString::number(tot)+")";
     }
-    else {
-        item->setText((*it).getTitolo());
-    }
+
+    item->setText(titolo);
     item->setFont(QFont("Arial", 12, QFont::Normal));
+    item->setSizeHint(w->sizeHint());
 
     addItem(item);
 
-    item->setSizeHint(w->sizeHint());
     setItemWidget(item, w);
-
 }

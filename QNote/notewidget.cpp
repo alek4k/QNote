@@ -6,19 +6,19 @@ using std::string;
 
 NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     : QWidget(parent),
-      textArea(new QPlainTextEdit),
+      textArea(new QPlainTextEdit(this)),
       layout(new QGridLayout(this)),
-      searchBar(new QLineEdit),
-      imageLabel(new QLabel),
-      colonnaSx(new QVBoxLayout()),
-      colonnaDx(new QVBoxLayout()),
-      barraTopLeft(new QGridLayout()),
-      barraTopRight(new QGridLayout()),
-      addNotaButton(new QToolButton),
-      deleteNotaButton(new QToolButton),
-      addImgButton(new QToolButton),
-      addToDoListButton(new QToolButton),
-      addTagButton(new QToolButton),
+      searchBar(new QLineEdit(this)),
+      imageLabel(new QLabel(this)),
+      colonnaSx(new QVBoxLayout(this)),
+      colonnaDx(new QVBoxLayout(this)),
+      barraTopLeft(new QGridLayout(this)),
+      barraTopRight(new QGridLayout(this)),
+      addNotaButton(new QToolButton(this)),
+      deleteNotaButton(new QToolButton(this)),
+      addImgButton(new QToolButton(this)),
+      addToDoListButton(new QToolButton(this)),
+      addTagButton(new QToolButton(this)),
       todoList(new ToDoListWidget(this)),
       note(note),
       lista(new NoteListWidget(this)),
@@ -54,7 +54,7 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     });
 
     //SALVATAGGIO AUTOMATICO SCRITTURA DESCRIZIONE NOTA
-    connect(textArea, &QPlainTextEdit::textChanged, [this] () {
+    /*connect(textArea, &QPlainTextEdit::textChanged, [this] () {
         auto items = lista->selectedItems();
         if (items.length() == 1) {
             //la prima riga diventa il titolo della nota
@@ -73,7 +73,7 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
 
             quickSave();
         }
-    });
+    });*/
 
 
     //SALVATAGGIO AUTOMATICO OBIETTIVI TO-DO LIST
@@ -307,7 +307,7 @@ void NoteWidget::refreshList() const{
     imageLabel->clear();
     todoList->clear();
 
-    auto queryResult = this->note.simpleSearch(VisualizzazioneOrdinata());
+    auto queryResult = note.simpleSearch(VisualizzazioneOrdinata());
     for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
         lista->addEntry(*it);
     }
@@ -328,8 +328,9 @@ void NoteWidget::cancellaNota(const ListaNote::Iterator& it) {
 
 void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     note.remove(it);
-    ++it;
-    note.insert(it, nota);
+    /*++it;
+    note.insert(it, nota);*/
+    note.push_back(nota);
 
     int old_index = lista->currentRow();
     quickSave();
@@ -351,10 +352,9 @@ void NoteWidget::addTag(const ListaNote::Iterator& it) {
             }
         }
 
-        QVector<QString>* temp = new QVector<QString>(t);
-        temp->push_back(tag);
-        (*it).setTag(*temp);
-        delete temp;
+        QVector<QString> temp(t);
+        temp.push_back(tag);
+        it->setTag(temp);
 
         int old_index = lista->currentRow();
         quickSave();
@@ -403,9 +403,9 @@ bool NoteWidget::loadFile(const QString& fileName, ListaNote::Iterator& it)
     buffer.open(QIODevice::WriteOnly);
     pixmap.save(&buffer, "JPG"); // writes pixmap into bytes in PNG format
 
-    ImgNote* nuovaImgNota = new ImgNote((*it).getTitolo(),
-                                        (*it).getDescrizione(),
-                                        (*it).getTag(),
+    ImgNote* nuovaImgNota = new ImgNote(it->getTitolo(),
+                                        it->getDescrizione(),
+                                        it->getTag(),
                                         bytes.toBase64());
     aggiornaNota(it, nuovaImgNota);
 

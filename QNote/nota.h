@@ -48,7 +48,7 @@ public:
 
     void setDataModifica(const QDateTime& dataModifica) noexcept;
 
-    void setTag(const QVector<QString> tag);
+    void setTag(const QVector<QString>& tag);
 };
 
 #endif // NOTA_H

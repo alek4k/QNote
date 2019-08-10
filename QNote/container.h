@@ -4,6 +4,7 @@
 #pragma once
 
 #include <utility>
+#include <cstring>
 
 template <typename T>
 class Container {
@@ -27,7 +28,9 @@ private:
             }
         }
 
-        Nodo(const Nodo&) = delete;
+        Nodo(const Nodo&) {
+            std::memset(reinterpret_cast<void*>(this), 0x00, sizeof(Nodo));
+        }
 
         Nodo& operator=(const Nodo&) = delete;
 
@@ -77,9 +80,6 @@ public:
 
         // Implementa l'ordine dei risultati di ricerca
         virtual Container<const Iterator> getResults(Container<const Iterator> &/*&*/ risultatiDisordinati) const {
-            auto daRiordinare = Container<const Iterator>(
-                        /*std::move(*/risultatiDisordinati/*)*/);
-            //return daRiordinare;
             return risultatiDisordinati;
         }
     };
@@ -166,6 +166,10 @@ public:
         Iterator* clone() const noexcept {
             return new Iterator(*this);
         }
+
+        bool isValid() const noexcept {
+            return ((nodo != nullptr) && (nodo != ((Container<T>::Nodo*)0x00)) && (nodo->info != nullptr));
+        }
     };
 
     class ConstIterator {
@@ -217,6 +221,10 @@ public:
         operator bool() const {
             return nodo;
         }
+
+        bool isValid() const noexcept {
+            return ((nodo != nullptr) && (nodo != ((Container<T>::Nodo*)0x00)) && (nodo->info != nullptr));
+        }
     };
 
     Container() noexcept : first(nullptr) {}
@@ -243,7 +251,7 @@ public:
     }
 
     virtual ~Container() {
-        /*while(!empty()) remove(begin());*/
+        erase();
     }
 
     bool empty() const noexcept {
@@ -298,7 +306,8 @@ public:
         return result;
     }
 
-    void insert(const Iterator& it, T* item) noexcept {
+    // TODO: insert
+    /*void insert(const Iterator& it, T* item) noexcept {
         if (it.nodo == first) {
             push_front(item);
             return;
@@ -309,8 +318,10 @@ public:
             return;
         }
 
-        new Nodo(item, it.nodo->previous, it.nodo);
-    }
+        auto nn = new Nodo(item->clone(), it.nodo->previous, it.nodo);
+        it.nodo->previous->next = nn;
+        it.nodo->previous = nn;
+    }*/
 
     void remove(const Iterator& it) noexcept {
         if (!it.nodo) return;
@@ -329,7 +340,7 @@ public:
 
     //brasa tutto
     void erase() noexcept {
-        while(first)
+        while(begin() != end())
             remove(begin());
     }
 

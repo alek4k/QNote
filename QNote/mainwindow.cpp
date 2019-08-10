@@ -67,8 +67,7 @@ void MainWindow::load() {
     // Carico il file selezionato dall'utente
     try {
         DeserializzaNote lettoreNote(percorsoFile);
-        ListaNote risultatoDeserializzazione(
-                    /*std::move(*/ListaNote::deserializza(lettoreNote/*)*/));
+        ListaNote risultatoDeserializzazione(std::move(ListaNote::deserializza(lettoreNote)));
         list.swap(risultatoDeserializzazione);
         //list.restore(risultatoDeserializzazione);
 
