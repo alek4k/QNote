@@ -54,7 +54,7 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     });
 
     //SALVATAGGIO AUTOMATICO SCRITTURA DESCRIZIONE NOTA
-    /*connect(textArea, &QPlainTextEdit::textChanged, [this] () {
+    connect(textArea, &QPlainTextEdit::textChanged, [this] () {
         auto items = lista->selectedItems();
         if (items.length() == 1) {
             //la prima riga diventa il titolo della nota
@@ -73,7 +73,7 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
 
             quickSave();
         }
-    });*/
+    });
 
 
     //SALVATAGGIO AUTOMATICO OBIETTIVI TO-DO LIST
@@ -344,9 +344,9 @@ void NoteWidget::addTag(const ListaNote::Iterator& it) {
                                              "Descrizione tag:", QLineEdit::Normal,
                                              "", &ok);
     if (ok && !tag.isEmpty()) {
-        QVector<QString> t = (*it).getTag();
+        QVector<QString> t = it->getTag();
         for (auto i = t.cbegin(); i != t.cend(); ++i) {
-            if ((*i).toLower().compare(tag.toLower()) == 0) {
+            if (i->toLower().compare(tag.toLower()) == 0) {
                 QMessageBox::information (nullptr, "Attenzione", "Tag già presente nella nota");
                 return;
             }

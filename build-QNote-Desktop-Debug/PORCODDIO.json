@@ -27,7 +27,7 @@
             "toDoList": [
                 {
                     "status": true,
-                    "target": "weee"
+                    "target": "nonna"
                 },
                 {
                     "status": false,
@@ -35,7 +35,7 @@
                 },
                 {
                     "status": true,
-                    "target": "nonna"
+                    "target": "weee"
                 }
             ]
         },
@@ -52,6 +52,8 @@
             "dataUltimaModifica": "sab ago 10 15:44:56 2019",
             "descrizione": "Con QNote puoi organizzare le tue note, aggiungendo tag, immagini e liste di obiettivi!d",
             "tag": [
+                "cacca",
+                "n00b"
             ],
             "tipo": "simpleNote",
             "titolo": "QNote"
