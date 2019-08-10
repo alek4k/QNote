@@ -43,14 +43,12 @@ private:
         Nodo* first = src;
         if (!first) return nullptr;
 
-        int currentIndex = 0;
         while(first->previous) {
             first = first->previous;
-            currentIndex -= 1;
         }
 
         Nodo* lista = nullptr;
-        Nodo* result = lista;
+        Nodo* result = first;
         while (first) {
             Nodo* temp = new Nodo(first->info->clone(), lista, nullptr);
 
@@ -58,9 +56,6 @@ private:
                 lista = temp;
             else
                 lista->next = temp;
-
-            if(currentIndex == 0) result = lista;
-            currentIndex += 1;
 
             lista = lista->next;
             first = first->next;
