@@ -3,8 +3,8 @@
 #include <iostream>
 
 Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
-    //auto daRiordinare = Container<const ListaNote::Iterator>(/*std::move(*/risultatiDisordinati/*)*/);
-    /*Container<const ListaNote::Iterator> riordinati;
+    /*auto daRiordinare = Container<const ListaNote::Iterator>(risultatiDisordinati);
+    Container<const ListaNote::Iterator> riordinati;
 
     while (!daRiordinare.empty()) {
         ListaNote::Iterator maggiore = *(daRiordinare.begin());
@@ -20,7 +20,6 @@ Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Contain
             daRiordinare.remove(daje);
         }
     }
-
 
     return riordinati;*/
     return risultatiDisordinati;
@@ -147,10 +146,10 @@ void DeserializzaNote::operator()(ListaNote& risultato) {
             tag.push_front((*it).toString());
         }
         if (tipo == "simpleNote") {
-            risultato.push_front(new SimpleNote(titolo, descrizione, tag, data));
+            risultato.push_back(new SimpleNote(titolo, descrizione, tag, data));
         } else if (tipo == "imgNote") {
             QString image = risultatoSerializzazione["image"].toString();
-            risultato.push_front(new ImgNote(titolo, descrizione, tag, image, data));
+            risultato.push_back(new ImgNote(titolo, descrizione, tag, image, data));
         } else if (tipo == "toDoNote") {
             const auto toDoRaw = risultatoSerializzazione["toDoList"].toArray();
             QList<ToDoItem> toDoList;
@@ -158,7 +157,7 @@ void DeserializzaNote::operator()(ListaNote& risultato) {
                 QJsonObject toDoObj = (*it).toObject();
                 toDoList.push_front(ToDoItem(toDoObj["target"].toString(), toDoObj["status"].toBool()));
             }
-            risultato.push_front(new ToDoNote(titolo, descrizione, tag, toDoList, data));
+            risultato.push_back(new ToDoNote(titolo, descrizione, tag, toDoList, data));
         } else {
             throw DeserializeException("Tipologia nota non riconosciuta");
         }
