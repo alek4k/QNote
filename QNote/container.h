@@ -250,10 +250,14 @@ public:
     }
 
     void push_front(const T& item) noexcept {
-        push_front(new T(item));
+        push_front(&item);
     }
 
     void push_front(T* item) {
+        // Evito ogni sorta di condivisione di memoria. Un puntatore che mi viene passato va distrutto altrove (non mi prendo l'ownership)
+        if (!item) return;
+        item = item->clone();
+
         if (!first) {
             first = new Nodo(item->clone(), nullptr, nullptr);
             return;
@@ -265,10 +269,14 @@ public:
     }
 
     void push_back(const T& item) noexcept {
-        push_back(new T(item));
+        push_back(&item);
     }
 
     void push_back(T* item) {
+        // Evito ogni sorta di condivisione di memoria. Un puntatore che mi viene passato va distrutto altrove (non mi prendo l'ownership)
+        if (!item) return;
+        item = item->clone();
+
         if (!first) {
             push_front(item);
             return;
@@ -276,7 +284,7 @@ public:
 
         Nodo* ultimo = first;
         while (ultimo->next) ultimo = ultimo->next;
-        ultimo->next = new Nodo(item->clone(), ultimo, nullptr);
+        ultimo->next = new Nodo(item, ultimo, nullptr);
     }
 
     int count() const {
