@@ -307,12 +307,9 @@ void NoteWidget::refreshList() const{
     imageLabel->clear();
     todoList->clear();
 
-    //auto queryResult = this->note.simpleSearch(VisualizzazioneOrdinata());
-    /*for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
+    auto queryResult = this->note.simpleSearch(VisualizzazioneOrdinata());
+    for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
         lista->addEntry(*it);
-    }*/
-    for (auto it = note.begin(); it != note.end(); ++it) {
-        lista->addEntry(it);
     }
 
     lista->setCurrentRow(0);

@@ -13,7 +13,7 @@ Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Contain
                 daje = it;
             }
 
-            riordinati.push_back(maggiore.clone());
+            riordinati.push_back(maggiore);
             daRiordinare.remove(daje);
         }
     }
