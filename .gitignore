@@ -5,3 +5,5 @@
 *.dylib
 *.dll
 *_moc*
+*moc_*
+ui_*.h
