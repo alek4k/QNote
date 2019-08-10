@@ -125,8 +125,9 @@ public:
     private:
         Nodo* nodo;
 
-        Iterator(Nodo* nodo = nullptr) noexcept
-            : nodo(nodo) {}
+        Iterator() noexcept : nodo(nullptr) {}
+
+        Iterator(Nodo* nodo) noexcept : nodo(nodo) {}
     public:
         Iterator(const Iterator& it) noexcept
             : nodo(it.nodo) {}
@@ -163,7 +164,7 @@ public:
         }
 
         Iterator* clone() const noexcept {
-            return new Iterator(nodo);
+            return new Iterator(*this);
         }
     };
 
@@ -206,7 +207,7 @@ public:
         }
 
         ConstIterator* clone() const noexcept {
-            return new ConstIterator(nodo);
+            return new ConstIterator(*this);
         }
 
         const T* operator->() const noexcept {

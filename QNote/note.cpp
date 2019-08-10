@@ -2,7 +2,7 @@
 
 Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
     auto daRiordinare = Container<const ListaNote::Iterator>(/*std::move(*/risultatiDisordinati/*)*/);
-    /*Container<const ListaNote::Iterator> riordinati;
+    Container<const ListaNote::Iterator> riordinati;
 
     while (!daRiordinare.empty()) {
         ListaNote::Iterator maggiore = *(daRiordinare.begin());
@@ -11,7 +11,7 @@ Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Contain
         for (auto it = daRiordinare.begin(); it != daRiordinare.end(); ++it) {
             if ((*it)->getDataModifica() > maggiore->getDataModifica()) {
                 maggiore = *it;
-                daje = it;
+                //daje = it;
             }
 
             riordinati.push_back(maggiore);
@@ -20,8 +20,8 @@ Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Contain
     }
 
 
-    return riordinati;*/
-    return daRiordinare;
+    return riordinati;
+    //return daRiordinare;
 }
 
 //RicercaTesto
