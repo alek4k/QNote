@@ -310,12 +310,9 @@ public:
         if (toRemove == first) {
             first = first->next;
             if (first) first->previous = toRemove->previous;
-            return;
         } else {
-            if (toRemove->next) {
-                if (toRemove->previous) toRemove->previous->next = toRemove->next;
-                if (toRemove->next) toRemove->next->previous = toRemove->previous;
-            }
+            if (toRemove->previous) toRemove->previous->next = toRemove->next;
+            if (toRemove->next) toRemove->next->previous = toRemove->previous;
         }
 
         delete toRemove;
