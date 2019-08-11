@@ -22,6 +22,7 @@ private:
     QMenu * const fileMenu;
     QAction * const importa;
     QAction * const esporta;
+    QAction * const salva;
     QAction * const quit;
 
     NoteWidget * mainWidget;
@@ -31,8 +32,9 @@ private:
 private slots:
     void importNote();
     void exportNote();
+    void saveNote();
     void exit();
-    void load();
+    void load(bool showError = true);
 };
 
 #endif // MAINWINDOW_H

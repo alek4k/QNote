@@ -45,14 +45,11 @@ private:
     ToDoListWidget* const todoList;
 
     ListaNote& note;
-
     NoteListWidget* lista;
 
     QString path;
 
     int currentRowNota;
-
-    void quickSave() const;
 };
 
 #endif // NOTEWIDGET_H

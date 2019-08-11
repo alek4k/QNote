@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
       fileMenu(menuBar()->addMenu("&File")),
       importa(new QAction(this)),
       esporta(new QAction(this)),
+      salva(new QAction(this)),
       quit(new QAction(this)),
       percorsoFile("qNote.json")
 {
@@ -26,16 +27,24 @@ MainWindow::MainWindow(QWidget *parent)
     resize(900, 650);
 
     // File Menu
+    salva->setText("Salva");
     importa->setText("Importa");
     esporta->setText("Esporta");
     quit->setText("Uscita");
+
+    salva->setShortcut(QKeySequence::Save);
+    salva->setStatusTip("Salva");
+    connect(salva, SIGNAL(triggered()), this, SLOT(saveNote()));
+    fileMenu->addAction(salva);
+
+    fileMenu->addSeparator();
 
     importa->setShortcuts(QKeySequence::Open);
     importa->setStatusTip("Importa da file");
     connect(importa, SIGNAL(triggered()), this, SLOT(importNote()));
     fileMenu->addAction(importa);
 
-    esporta->setShortcuts(QKeySequence::Save);
+    esporta->setShortcuts(QKeySequence::SaveAs);
     esporta->setStatusTip("Esporta su file");
     connect(esporta, SIGNAL(triggered()), this, SLOT(exportNote()));
     fileMenu->addAction(esporta);
@@ -47,39 +56,38 @@ MainWindow::MainWindow(QWidget *parent)
     connect(quit, SIGNAL(triggered()), this, SLOT(exit()));
     fileMenu->addAction(quit);
 
-    load();
+    load(false);
     if (list.empty()) {
         list.push_back(new SimpleNote("QNote", "Con QNote puoi organizzare le tue note, aggiungendo tag, immagini e liste di obiettivi!"));
+
         mainWidget = new NoteWidget(list, percorsoFile, this);
 
         // Imposto il widget principale sulla finestra
         setCentralWidget(mainWidget);
     }
-
-
 }
 
 void MainWindow::exit() {
     QApplication::quit();
 }
 
-void MainWindow::load() {
+void MainWindow::load(bool showError) {
     // Carico il file selezionato dall'utente
     try {
         DeserializzaNote lettoreNote(percorsoFile);
         ListaNote risultatoDeserializzazione(
-                    /*std::move(*/ListaNote::deserializza(lettoreNote/*)*/));
+                    ListaNote::deserializza(lettoreNote));
         list.swap(risultatoDeserializzazione);
-        //list.restore(risultatoDeserializzazione);
-
 
         QWidget *theWidget = centralWidget();
         mainWidget = new NoteWidget(list, percorsoFile, this);
         setCentralWidget(mainWidget);
         theWidget->deleteLater();
     } catch (const DeserializeException& ex) {
-        QMessageBox messageBox;
-        messageBox.critical(nullptr, "Impossibile caricare le note", ex.what());
+        if (showError) {
+            QMessageBox messageBox;
+            messageBox.critical(nullptr, "Impossibile caricare le note", ex.what());
+        }
     }
 }
 
@@ -115,8 +123,7 @@ void MainWindow::exportNote() {
 
     QMessageBox messageBox;
     try {
-        SerializzaNote serializzatore(percorsoFile);
-        list.serializza(serializzatore);
+        saveNote();
         mainWidget->setPath(percorsoFile);
 
         QString messaggio("Sono state esportate ");
@@ -126,4 +133,9 @@ void MainWindow::exportNote() {
     } catch (const SerializeException& ex) {
         messageBox.critical(nullptr, "Errore durante l'esportazione delle note", ex.what());
     }
+}
+
+void MainWindow::saveNote() {
+    SerializzaNote serializzatore(percorsoFile);
+    list.serializza(serializzatore);
 }

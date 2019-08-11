@@ -78,7 +78,6 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
             nota->setDescrizione(descrizione);
             nota->setDataModifica();
 
-            quickSave();
             //if (currentRowNota != 0) refreshList();
         }
     });
@@ -99,7 +98,6 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     //PRESSIONE PULSANTE CREAZIONE NOTA
     connect(addNotaButton, &QToolButton::clicked, [this] () {
         this->note.push_front(new SimpleNote("Nuova nota..."));
-        quickSave();
         refreshList();
     });
 
@@ -304,7 +302,6 @@ void NoteWidget::highlightChecked(QListWidgetItem *item){
 
         it->setDataModifica();
 
-        quickSave();
         refreshList();
     }
 }
@@ -329,7 +326,6 @@ void NoteWidget::cancellaNota(const ListaNote::Iterator& it) {
                                 QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
             note.remove(it);
-            quickSave();
             refreshList();
     }
 }
@@ -340,7 +336,6 @@ void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     note.insert(it, nota);*/
     note.push_back(nota);
 
-    quickSave();
     refreshList();
 }
 
@@ -363,7 +358,6 @@ void NoteWidget::addTag(const ListaNote::Iterator& it) {
         it->setTag(temp);
         it->setDataModifica();
 
-        quickSave();
         refreshList();
     }
 }
@@ -423,11 +417,6 @@ void NoteWidget::imageOpen(ListaNote::Iterator& it) {
 
     //tengo aperto il dialog fino a quando l'utente non lo chiude o inserisce un file valido
     while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().first(), it)) {}
-}
-
-void NoteWidget::quickSave() const {
-    SerializzaNote serializzatore(path);
-    note.serializza(serializzatore);
 }
 
 void NoteWidget::setPath(QString& percorsoFile) {
