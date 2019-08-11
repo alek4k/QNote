@@ -16,6 +16,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow() = default;
+protected slots:
+    void importNote();
+    void exportNote();
+    void save();
+    void exit();
+    void load(bool showError = true);
 private:
     QIcon icon;
 
@@ -25,16 +31,12 @@ private:
     QAction * const salva;
     QAction * const quit;
 
+    void closeEvent(QCloseEvent *event);
+
     NoteWidget * mainWidget;
 
     ListaNote list;
     QString percorsoFile;
-private slots:
-    void importNote();
-    void exportNote();
-    void save();
-    void exit();
-    void load(bool showError = true);
 };
 
 #endif // MAINWINDOW_H

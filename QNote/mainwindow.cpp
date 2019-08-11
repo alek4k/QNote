@@ -67,6 +67,11 @@ MainWindow::MainWindow(QWidget *parent)
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    QWidget::closeEvent(event);
+    exit();
+}
+
 void MainWindow::exit() {
     if (mainWidget->modificheInSospeso()) {
         //ho delle modifiche eventualmente da salvare prima di chiudere
