@@ -3,7 +3,7 @@
 #include <iostream>
 
 Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
-    /*auto daRiordinare = Container<const ListaNote::Iterator>(risultatiDisordinati);
+    auto daRiordinare = Container<const ListaNote::Iterator>(risultatiDisordinati);
     Container<const ListaNote::Iterator> riordinati;
 
     while (!daRiordinare.empty()) {
@@ -15,14 +15,14 @@ Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Contain
                 maggiore = *it;
                 daje = it;
             }
-
-            riordinati.push_back(maggiore);
-            daRiordinare.remove(daje);
         }
+
+        riordinati.push_back(maggiore);
+        daRiordinare.remove(daje);
     }
 
-    return riordinati;*/
-    return risultatiDisordinati;
+    return riordinati;
+    //return risultatiDisordinati;
 }
 
 //RicercaTesto

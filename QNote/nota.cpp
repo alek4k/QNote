@@ -31,6 +31,6 @@ void Nota::setDataModifica(const QDateTime& dataModifica) noexcept {
     dataUltimaModifica = dataModifica;
 }
 
-void Nota::setTag(const QVector<QString>& tag) {
+void Nota::setTag(const QVector<QString>& tag) noexcept {
     this->tag = tag;
 }

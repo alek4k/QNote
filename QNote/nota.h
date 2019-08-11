@@ -46,9 +46,9 @@ public:
 
     void setDescrizione(const QString& descrizione) noexcept;
 
-    void setDataModifica(const QDateTime& dataModifica) noexcept;
+    void setDataModifica(const QDateTime& dataModifica = QDateTime::currentDateTime()) noexcept;
 
-    void setTag(const QVector<QString>& tag);
+    void setTag(const QVector<QString>& tag) noexcept;
 };
 
 #endif // NOTA_H

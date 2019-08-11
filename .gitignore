@@ -7,3 +7,5 @@
 *_moc*
 *moc_*
 ui_*.h
+
+build-QNote-Desktop-Debug/Makefile

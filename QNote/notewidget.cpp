@@ -61,15 +61,19 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
             QTextDocument *doc = (*textArea).document();
             QTextBlock firstRow = doc->findBlockByLineNumber(0);
             QString titolo = firstRow.text();
-            if (titolo.compare(static_cast<NoteListWidgetItem*>(items[0])->getNota()->getTitolo()) != 0) {
-                static_cast<NoteListWidgetItem*>(items[0])->getNota()->setTitolo(titolo);
+
+            auto nota = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+
+            if (titolo.compare(nota->getTitolo()) != 0) {
+                nota->setTitolo(titolo);
                 static_cast<NoteListWidgetItem*>(items[0])->setText(titolo);
             }
 
             //tutto il resto diventa descrizione della nota
             QString testo = textArea->toPlainText();
             QString descrizione = testo.mid(titolo.length()+1,testo.length()-titolo.length());
-            static_cast<NoteListWidgetItem*>(items[0])->getNota()->setDescrizione(descrizione);
+            nota->setDescrizione(descrizione);
+            nota->setDataModifica();
 
             quickSave();
         }
@@ -293,11 +297,10 @@ void NoteWidget::highlightChecked(QListWidgetItem *item){
             }
         }
 
-        //refresh nota corrente
-        int old_index = lista->currentRow();
+        it->setDataModifica();
+
         quickSave();
         refreshList();
-        lista->setCurrentRow(old_index);
     }
 }
 
@@ -332,10 +335,8 @@ void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     note.insert(it, nota);*/
     note.push_back(nota);
 
-    int old_index = lista->currentRow();
     quickSave();
     refreshList();
-    lista->setCurrentRow(old_index);
 }
 
 void NoteWidget::addTag(const ListaNote::Iterator& it) {
@@ -355,11 +356,10 @@ void NoteWidget::addTag(const ListaNote::Iterator& it) {
         QVector<QString> temp(t);
         temp.push_back(tag);
         it->setTag(temp);
+        it->setDataModifica();
 
-        int old_index = lista->currentRow();
         quickSave();
         refreshList();
-        lista->setCurrentRow(old_index);
     }
 }
 

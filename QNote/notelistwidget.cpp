@@ -1,7 +1,7 @@
 #include "notelistwidget.h"
 #include "container.h"
 
-NoteListWidget::NoteListWidget(QWidget* parent) : QListWidget(parent), w(new QWidget(this)), tags(new QLabel(this)), hl(new QVBoxLayout(this)) {
+NoteListWidget::NoteListWidget(QWidget* parent) : QListWidget(parent)/*, w(new QWidget(this)), tags(new QLabel(this)), hl(new QVBoxLayout(this))*/ {
     //permetto la selezione di una sola nota per volta (niente combo Ctrl/Shift)
     setSelectionMode(QAbstractItemView::SingleSelection);
 }
@@ -17,50 +17,23 @@ Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
 void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
     if (!it.isValid()) return;
 
-    //color
-    /*QPixmap pm(10,10);
-    pm.fill();
-    QPainter p(&pm);
-    p.setRenderHint(QPainter::Antialiasing, true);
-    QPen pen(Qt::black, 0);
-    p.setPen(pen);
-    QColor color;
-    color.setRgb(255, 255, 000);
-    QBrush brush(color);
-    p.setBrush(brush);
-    p.drawEllipse(0, 0, 10, 10);
-    QLabel *l = new QLabel;
-    l->setPixmap(pm);
-    l->setMaximumSize(20, 20);
-    hl->addWidget(l);*/
+    QVBoxLayout* hl = new QVBoxLayout(this);
+    QWidget* w = new QWidget(this);
+    QLabel* tags = new QLabel(this);
 
-    //title
-    //QLabel* title = new QLabel(it->getTitolo());
-    //title->setFont(QFont("Arial", 12, QFont::Normal));
-    //hl->addWidget(title);
-
-    //tag
-
-    //hl->addWidget(new QLabel("test"));
-
-    tags->setText("");
+    //tags
     for (int i = 0; i < it->getTag().length(); i++) {
         if (i==0)
             tags->setText(it->getTag()[i]);
         else
             tags->setText(tags->text() + ", " + it->getTag()[i]);
     }
-    tags->setStyleSheet("margin-left: 10px; margin-top:25px;");
-
-
-    //tags->show();
-    //tags->resize(100,100);
+    tags->setStyleSheet("margin-left: 10px; margin-top:30px;");
     QFont f( "Arial", 10, QFont::Light);
     tags->setFont(f);
     tags->setAlignment(Qt::AlignBottom);
 
     hl->addWidget(tags);
-
     w->setLayout(hl);
 
     QListWidgetItem *item = new NoteListWidgetItem(this, it);
@@ -74,6 +47,7 @@ void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
 
     item->setText(titolo);
     item->setFont(QFont("Arial", 12, QFont::Normal));
+
     item->setSizeHint(w->sizeHint());
 
     addItem(item);

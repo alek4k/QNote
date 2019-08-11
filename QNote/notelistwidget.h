@@ -10,9 +10,9 @@ class NoteListWidget : public QListWidget
 {
 private:
     ListaNote* list;
-    QWidget *w;
-    QLabel *tags;
-    QVBoxLayout *hl;
+    //QWidget *w;
+    //QLabel *tags;
+    //QVBoxLayout *hl;
 
 public:
     NoteListWidget(QWidget* parent = nullptr);
