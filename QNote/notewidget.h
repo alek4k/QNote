@@ -50,6 +50,8 @@ private:
 
     QString path;
 
+    int currentRowNota;
+
     void quickSave() const;
 };
 

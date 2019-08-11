@@ -55,6 +55,9 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
 
     //SALVATAGGIO AUTOMATICO SCRITTURA DESCRIZIONE NOTA
     connect(textArea, &QPlainTextEdit::textChanged, [this] () {
+        //se l'indice di riga è cambiato, sto arrivando da un'altra nota e non devo salvare nulla
+        if (lista->currentRow() != currentRowNota) return;
+
         auto items = lista->selectedItems();
         if (items.length() == 1) {
             //la prima riga diventa il titolo della nota
@@ -76,9 +79,9 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
             nota->setDataModifica();
 
             quickSave();
+            //if (currentRowNota != 0) refreshList();
         }
     });
-
 
     //SALVATAGGIO AUTOMATICO OBIETTIVI TO-DO LIST
     connect(todoList, SIGNAL(itemChanged(QListWidgetItem*)),
@@ -204,6 +207,8 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
             QString titolo = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getTitolo();
             QString descr = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione();
             textArea->setPlainText(titolo + "\n" + descr);
+
+            currentRowNota = lista->currentRow();
 
             auto imgNota = dynamic_cast<ImgNote*>(&t);
             if (imgNota) {
