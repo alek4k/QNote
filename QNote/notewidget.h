@@ -22,10 +22,15 @@ public:
     void setPath(QString& percorsoFile);
 protected slots:
     void refreshList() const;
-    void cancellaNota(const ListaNote::Iterator&);
+    void creaNota();
+    void cancellaNota();
+    void scritturaNota();
+    void trasformaInObiettivo();
+    void cercaNote(const QString ricerca) const;
     void aggiornaNota(ListaNote::Iterator&, Nota*);
-    void addTag(const ListaNote::Iterator&);
-    void imageOpen(ListaNote::Iterator&);
+    void addTag();
+    void imageOpen();
+    void selezioneNota();
     bool loadFile(const QString&, ListaNote::Iterator&);
     void highlightChecked(QListWidgetItem*);
 private:

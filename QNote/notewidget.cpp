@@ -30,7 +30,7 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     textArea->setReadOnly(true);
 
     //abilito drag and drop sulla ToDoList
-    todoList->setDragDropMode(QAbstractItemView::InternalMove);
+    //todoList->setDragDropMode(QAbstractItemView::InternalMove);
     //impostazioni grafiche ToDoList
     todoList->setFocusPolicy(Qt::NoFocus);
     QPalette p = todoList->palette();
@@ -39,95 +39,32 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     todoList->setPalette(p);
 
     //ACTION SCRITTURA TESTO SU CAMPO DI RICERCA
-    connect(searchBar, &QLineEdit::textChanged, [this] () {
-        QString lookingFor = searchBar->text();
-        if (lookingFor.compare("") == 0) {
-            refreshList();
-            return;
-        }
-
-        lista->clear();
-        auto queryResult = this->note.simpleSearch(RicercaTesto(QString(lookingFor)));
-        for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
-            lista->addEntry(*it);
-        }
-    });
+    connect(searchBar, SIGNAL(textChanged(QString)), this, SLOT(cercaNote(QString)));
 
     //SALVATAGGIO AUTOMATICO SCRITTURA DESCRIZIONE NOTA
-    connect(textArea, &QPlainTextEdit::textChanged, [this] () {
-        //se l'indice di riga è cambiato, sto arrivando da un'altra nota e non devo salvare nulla
-        if (lista->currentRow() != currentRowNota) return;
-
-        auto items = lista->selectedItems();
-        if (items.length() == 1) {
-            //la prima riga diventa il titolo della nota
-            QTextDocument *doc = (*textArea).document();
-            QTextBlock firstRow = doc->findBlockByLineNumber(0);
-            QString titolo = firstRow.text();
-
-            auto nota = static_cast<NoteListWidgetItem*>(items[0])->getNota();
-
-            if (titolo.compare(nota->getTitolo()) != 0) {
-                nota->setTitolo(titolo);
-                static_cast<NoteListWidgetItem*>(items[0])->setText(titolo);
-            }
-
-            //tutto il resto diventa descrizione della nota
-            QString testo = textArea->toPlainText();
-            QString descrizione = testo.mid(titolo.length()+1,testo.length()-titolo.length());
-            nota->setDescrizione(descrizione);
-            nota->setDataModifica();
-
-            //if (currentRowNota != 0) refreshList();
-        }
-    });
+    connect(textArea, SIGNAL(textChanged()), this, SLOT(scritturaNota()));
 
     //SALVATAGGIO AUTOMATICO OBIETTIVI TO-DO LIST
     connect(todoList, SIGNAL(itemChanged(QListWidgetItem*)),
-                         this, SLOT(highlightChecked(QListWidgetItem*)));
+            this, SLOT(highlightChecked(QListWidgetItem*)));
 
     //PRESSIONE PULSANTE ELIMINAZIONE NOTA
-    connect(deleteNotaButton, &QToolButton::clicked, [this] () {
-        auto items = lista->selectedItems();
-        if (items.length() == 1) {
-            ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
-            cancellaNota(it);
-        }
-    });
+    connect(deleteNotaButton, SIGNAL(clicked()), this, SLOT(cancellaNota()));
 
     //PRESSIONE PULSANTE CREAZIONE NOTA
-    connect(addNotaButton, &QToolButton::clicked, [this] () {
-        this->note.push_front(new SimpleNote("Nuova nota..."));
-        refreshList();
-    });
+    connect(addNotaButton, SIGNAL(clicked()), this, SLOT(creaNota()));
 
     //PRESSIONE PULSANTE AGGIUNTA TAG
-    connect(addTagButton, &QToolButton::clicked, [this] () {
-        auto items = lista->selectedItems();
-        if (items.length() == 1) {
-            ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
-            addTag(it);
-        }
-    });
+    connect(addTagButton, SIGNAL(clicked()), this, SLOT(addTag()));
 
     //PRESSIONE PULSANTE AGGIUNTA TODO LIST
-    connect(addToDoListButton, &QToolButton::clicked, [this] () {
-       auto items = lista->selectedItems();
-       if(items.length() == 1) {
-           ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
-           ToDoNote* nuovaToDo = new ToDoNote((*it).getTitolo(), (*it).getDescrizione(), (*it).getTag());
-           aggiornaNota(it, nuovaToDo);
-       }
-    });
+    connect(addToDoListButton, SIGNAL(clicked()), this, SLOT(trasformaInObiettivo()));
 
     //PRESSIONE PULSANTE AGGIUNTA IMMAGINE
-    connect(addImgButton, &QToolButton::clicked, [this] () {
-        auto items = lista->selectedItems();
-        if(items.length() == 1) {
-            ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
-            imageOpen(it);
-        }
-    });
+    connect(addImgButton, SIGNAL(clicked()), this, SLOT(imageOpen()));
+
+    //CAMBIO SELEZIONE NOTA DALLA LISTA
+    connect(lista, SIGNAL(itemSelectionChanged()), this, SLOT(selezioneNota()), Qt::QueuedConnection);
 
     //qualche miglioria grafica per l'area di testo
     textArea->setStyleSheet("QPlainTextEdit { "
@@ -183,83 +120,6 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     layout->setColumnStretch(0, 10);
     layout->setColumnStretch(1, 20);
 
-    //CAMBIO SELEZIONE NOTA DALLA LISTA
-    connect(lista, &NoteListWidget::itemSelectionChanged, [this] () {
-        auto items = lista->selectedItems();
-        if (items.length() != 1) {
-            imageLabel->clear();
-            colonnaDx->removeWidget(imageLabel);
-            colonnaDx->removeWidget(todoList);
-            textArea->clear();
-            todoList->clear();
-            deleteNotaButton->setVisible(false);
-            textArea->setReadOnly(true);
-            addImgButton->setVisible(false);
-            addToDoListButton->setVisible(false);
-            addTagButton->setVisible(false);
-            deleteNotaButton->setVisible(false);
-        }
-        else {
-            Nota& t = *static_cast<NoteListWidgetItem*>(items[0])->getNota();
-
-            QString titolo = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getTitolo();
-            QString descr = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione();
-            textArea->setPlainText(titolo + "\n" + descr);
-
-            currentRowNota = lista->currentRow();
-
-            auto imgNota = dynamic_cast<ImgNote*>(&t);
-            if (imgNota) {
-                QImage img;
-                //img.loadFromData(QByteArray::fromBase64(imgNota->getImage().toStdString().c_str()));
-                img.loadFromData(QByteArray::fromBase64(imgNota->getImage().toLocal8Bit()));
-                imageLabel->setPixmap(QPixmap::fromImage(img).scaled(400, 400, Qt::KeepAspectRatio));
-
-                colonnaDx->removeWidget(textArea);
-                colonnaDx->addWidget(imageLabel);
-                colonnaDx->addWidget(textArea);
-                imageLabel->setVisible(true);
-                addImgButton->setVisible(false);
-                addToDoListButton->setVisible(false);
-            }
-            else {
-                imageLabel->clear();
-                colonnaDx->removeWidget(imageLabel);
-                imageLabel->setVisible(false);
-            }
-
-            if (dynamic_cast<ToDoNote*>(&t)) {
-                todoList->clear();
-                auto currentToDoList = static_cast<ToDoNote*>(&t)->getToDoList();
-
-                todoList->addEntry(new ToDoItem("Inserisci obiettivo..."));
-                for (auto it = currentToDoList.cbegin(); it != currentToDoList.cend(); ++it) {
-                    todoList->addEntry(&const_cast<ToDoItem&>(*it));
-                }
-
-                colonnaDx->removeWidget(textArea);
-                colonnaDx->addWidget(todoList);
-                colonnaDx->addWidget(textArea);
-                todoList->setVisible(true);
-                addToDoListButton->setVisible(false);
-            }
-            else {
-                todoList->clear();
-                colonnaDx->removeWidget(todoList);
-                todoList->setVisible(false);
-            }
-
-            if (dynamic_cast<SimpleNote*>(&t)) {
-                addToDoListButton->setVisible(true);
-                addImgButton->setVisible(true);
-            }
-
-            textArea->setReadOnly(false);
-            deleteNotaButton->setVisible(true);
-            addTagButton->setVisible(true);
-        }
-    });
-
     //carico tutte le note nella lista
     refreshList();
 }
@@ -269,41 +129,161 @@ NoteWidget::~NoteWidget() {
     delete sentinella;
 }
 
-void NoteWidget::highlightChecked(QListWidgetItem *item){
+void NoteWidget::selezioneNota() {
+    auto items = lista->selectedItems();
+    if (items.length() != 1) {
+        imageLabel->clear();
+        colonnaDx->removeWidget(imageLabel);
+        colonnaDx->removeWidget(todoList);
+        textArea->clear();
+        todoList->clear();
+        deleteNotaButton->setVisible(false);
+        textArea->setReadOnly(true);
+        addImgButton->setVisible(false);
+        addToDoListButton->setVisible(false);
+        addTagButton->setVisible(false);
+        deleteNotaButton->setVisible(false);
+    }
+    else {
+        Nota& t = *static_cast<NoteListWidgetItem*>(items[0])->getNota();
+
+        QString titolo = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getTitolo();
+        QString descr = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione();
+        textArea->setPlainText(titolo + "\n" + descr);
+
+        currentRowNota = lista->currentRow();
+
+        auto imgNota = dynamic_cast<ImgNote*>(&t);
+        if (imgNota) {
+            QImage img;
+            img.loadFromData(QByteArray::fromBase64(imgNota->getImage().toLocal8Bit()));
+            imageLabel->setPixmap(QPixmap::fromImage(img).scaled(400, 400, Qt::KeepAspectRatio));
+
+            colonnaDx->removeWidget(textArea);
+            colonnaDx->addWidget(imageLabel);
+            colonnaDx->addWidget(textArea);
+            imageLabel->setVisible(true);
+            addImgButton->setVisible(false);
+            addToDoListButton->setVisible(false);
+        }
+        else {
+            imageLabel->clear();
+            colonnaDx->removeWidget(imageLabel);
+            imageLabel->setVisible(false);
+        }
+
+        if (dynamic_cast<ToDoNote*>(&t)) {
+            todoList->clear();
+            auto currentToDoList = static_cast<ToDoNote*>(&t)->getToDoList();
+
+            todoList->addEntry(new ToDoItem("Inserisci obiettivo..."));
+            for (auto it = currentToDoList.cbegin(); it != currentToDoList.cend(); ++it) {
+                todoList->addEntry(&const_cast<ToDoItem&>(*it));
+            }
+
+            colonnaDx->removeWidget(textArea);
+            colonnaDx->addWidget(todoList);
+            colonnaDx->addWidget(textArea);
+            todoList->setVisible(true);
+            addToDoListButton->setVisible(false);
+        }
+        else {
+            todoList->clear();
+            colonnaDx->removeWidget(todoList);
+            todoList->setVisible(false);
+        }
+
+        if (dynamic_cast<SimpleNote*>(&t)) {
+            addToDoListButton->setVisible(true);
+            addImgButton->setVisible(true);
+        }
+
+        textArea->setReadOnly(false);
+        deleteNotaButton->setVisible(true);
+        addTagButton->setVisible(true);
+    }
+}
+
+void NoteWidget::cercaNote(QString ricerca) const {
+    if (ricerca.compare("") == 0) {
+        refreshList();
+        return;
+    }
+
+    lista->clear();
+    auto queryResult = this->note.simpleSearch(RicercaTesto(QString(ricerca)));
+    for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
+        lista->addEntry(*it);
+    }
+}
+
+void NoteWidget::scritturaNota() {
+    //se l'indice di riga è cambiato, sto arrivando da un'altra nota e non devo salvare nulla
+    if (lista->currentRow() != currentRowNota) return;
+
+    auto items = lista->selectedItems();
+
+    //la prima riga diventa il titolo della nota
+    QTextDocument *doc = (*textArea).document();
+    QTextBlock firstRow = doc->findBlockByLineNumber(0);
+    QString titolo = firstRow.text();
+
+    auto nota = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+
+    if (titolo.compare(nota->getTitolo()) != 0) {
+        nota->setTitolo(titolo);
+        static_cast<NoteListWidgetItem*>(items[0])->setText(titolo);
+    }
+
+    //tutto il resto diventa descrizione della nota
+    QString testo = textArea->toPlainText();
+    QString descrizione = testo.mid(titolo.length()+1,testo.length()-titolo.length());
+    nota->setDescrizione(descrizione);
+    nota->setDataModifica();
+
+    //if (currentRowNota != 0) refreshList();
+}
+
+void NoteWidget::trasformaInObiettivo() {
+    auto items = lista->selectedItems();
+    ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+    ToDoNote* nuovaToDo = new ToDoNote((*it).getTitolo(), (*it).getDescrizione(), (*it).getTag());
+    aggiornaNota(it, nuovaToDo);
+}
+
+void NoteWidget::highlightChecked(QListWidgetItem *item) {
     auto changed = static_cast<ToDoListWidgetItem*>(item);
     auto items = lista->selectedItems();
     int row = todoList->row(item);
 
-    if(items.length() == 1) {
-        ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
-        if (changed->text().length() == 0) {
-            /* il testo è stato rimosso, quindi elimino l'obiettivo corrente;
-             * all'indice 0 c'è il ToDo di default per creare un nuovo obiettivo: in quel caso evito!
-             */
-            if (row != 0) {
-                auto old_list = static_cast<ToDoNote&>(*it).getToDoList();
-                //rimuovo tenendo conto del todo di default all'indice 0
-                old_list.removeAt(row - 1);
-                static_cast<ToDoNote&>(*it).setToDoList(old_list);
-            }
+    ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+    if (changed->text().length() == 0) {
+        /* il testo è stato rimosso, quindi elimino l'obiettivo corrente;
+         * all'indice 0 c'è il ToDo di default per creare un nuovo obiettivo: in quel caso evito!
+         */
+        if (row != 0) {
+            auto old_list = static_cast<ToDoNote&>(*it).getToDoList();
+            //rimuovo tenendo conto del todo di default all'indice 0
+            old_list.removeAt(row - 1);
+            static_cast<ToDoNote&>(*it).setToDoList(old_list);
+        }
+    }
+    else {
+        if (row == 0) {
+            //devo creare il todoItem e aggiungerlo alla lista di obiettivi
+            auto old_list = static_cast<ToDoNote&>(*it).getToDoList();
+            old_list.push_front(ToDoItem(changed->text(), changed->checkState() == Qt::Checked ? true : false));
+            static_cast<ToDoNote&>(*it).setToDoList(old_list);
         }
         else {
-            if (row == 0) {
-                //devo creare il todoItem e aggiungerlo alla lista di obiettivi
-                auto old_list = static_cast<ToDoNote&>(*it).getToDoList();
-                old_list.push_front(ToDoItem(changed->text(), changed->checkState() == Qt::Checked ? true : false));
-                static_cast<ToDoNote&>(*it).setToDoList(old_list);
-            }
-            else {
-                //normale modifica di testo o checkbox su un item già esistente
-                changed->getToDo()->updateItem(changed->text(), changed->checkState() == Qt::Checked ? true : false);
-            }
+            //normale modifica di testo o checkbox su un item già esistente
+            changed->getToDo()->updateItem(changed->text(), changed->checkState() == Qt::Checked ? true : false);
         }
-
-        it->setDataModifica();
-
-        refreshList();
     }
+
+    it->setDataModifica();
+
+    refreshList();
 }
 
 void NoteWidget::refreshList() const{
@@ -320,7 +300,16 @@ void NoteWidget::refreshList() const{
     lista->setCurrentRow(0);
 }
 
-void NoteWidget::cancellaNota(const ListaNote::Iterator& it) {
+void NoteWidget::creaNota() {
+    this->note.push_front(new SimpleNote("Nuova nota..."));
+    refreshList();
+}
+
+void NoteWidget::cancellaNota() {
+    auto items = lista->selectedItems();
+
+    ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+
     QMessageBox::StandardButton reply;
     reply = QMessageBox::warning(this, (*it).getTitolo(), "Cancellare la nota selezionata?",
                                 QMessageBox::Yes|QMessageBox::No);
@@ -339,7 +328,10 @@ void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     refreshList();
 }
 
-void NoteWidget::addTag(const ListaNote::Iterator& it) {
+void NoteWidget::addTag() {
+    auto items = lista->selectedItems();
+    ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+
     bool ok;
     QString tag = QInputDialog::getText(this, "Nuovo tag",
                                              "Descrizione tag:", QLineEdit::Normal,
@@ -411,7 +403,10 @@ bool NoteWidget::loadFile(const QString& fileName, ListaNote::Iterator& it)
     return true;
 }
 
-void NoteWidget::imageOpen(ListaNote::Iterator& it) {
+void NoteWidget::imageOpen() {
+    auto items = lista->selectedItems();
+    ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
+
     QFileDialog dialog(this, tr("Open File"));
     initializeImageFileDialog(dialog, QFileDialog::AcceptOpen);
 
