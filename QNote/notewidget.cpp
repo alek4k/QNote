@@ -29,8 +29,6 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     deleteNotaButton->setVisible(false);
     textArea->setReadOnly(true);
 
-    //abilito drag and drop sulla ToDoList
-    //todoList->setDragDropMode(QAbstractItemView::InternalMove);
     //impostazioni grafiche ToDoList
     todoList->setFocusPolicy(Qt::NoFocus);
     QPalette p = todoList->palette();
