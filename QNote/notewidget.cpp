@@ -22,7 +22,8 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
       todoList(new ToDoListWidget(this)),
       note(note),
       lista(new NoteListWidget(this)),
-      path(percorsoFile)
+      path(percorsoFile),
+      modificato(false)
 {
     addToDoListButton->setVisible(false);
     addImgButton->setVisible(false);
@@ -238,6 +239,7 @@ void NoteWidget::scritturaNota() {
     QString descrizione = testo.mid(titolo.length()+1,testo.length()-titolo.length());
     nota->setDescrizione(descrizione);
     nota->setDataModifica();
+    modificato = true;
 
     //if (currentRowNota != 0) refreshList();
 }
@@ -280,6 +282,7 @@ void NoteWidget::highlightChecked(QListWidgetItem *item) {
     }
 
     it->setDataModifica();
+    modificato = true;
 
     refreshList();
 }
@@ -300,6 +303,7 @@ void NoteWidget::refreshList() const{
 
 void NoteWidget::creaNota() {
     this->note.push_front(new SimpleNote("Nuova nota..."));
+    modificato = true;
     refreshList();
 }
 
@@ -313,6 +317,7 @@ void NoteWidget::cancellaNota() {
                                 QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
             note.remove(it);
+            modificato = true;
             refreshList();
     }
 }
@@ -322,6 +327,8 @@ void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     /*++it;
     note.insert(it, nota);*/
     note.push_back(nota);
+
+    modificato = true;
 
     refreshList();
 }
@@ -347,6 +354,7 @@ void NoteWidget::addTag() {
         temp.push_back(tag);
         it->setTag(temp);
         it->setDataModifica();
+        modificato = true;
 
         refreshList();
     }
@@ -414,4 +422,12 @@ void NoteWidget::imageOpen() {
 
 void NoteWidget::setPath(QString& percorsoFile) {
     path = percorsoFile;
+}
+
+void NoteWidget::salvato() {
+    modificato = false;
+}
+
+bool NoteWidget::modificheInSospeso() const {
+    return modificato;
 }

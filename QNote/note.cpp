@@ -1,5 +1,4 @@
 #include "note.h"
-
 #include <iostream>
 
 Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
@@ -22,7 +21,6 @@ Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Contain
     }
 
     return riordinati;
-    //return risultatiDisordinati;
 }
 
 //RicercaTesto

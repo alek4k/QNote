@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     salva->setShortcut(QKeySequence::Save);
     salva->setStatusTip("Salva");
-    connect(salva, SIGNAL(triggered()), this, SLOT(saveNote()));
+    connect(salva, SIGNAL(triggered()), this, SLOT(save()));
     fileMenu->addAction(salva);
 
     fileMenu->addSeparator();
@@ -68,11 +68,16 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::exit() {
+    if (mainWidget->modificheInSospeso()) {
+        //ho delle modifiche eventualmente da salvare prima di chiudere
+        if (QMessageBox::Yes == QMessageBox::question(nullptr, "Modifiche in sospeso", "Salvare tutte le modifiche prima di uscire?"))
+            save();
+    }
     QApplication::quit();
 }
 
 void MainWindow::load(bool showError) {
-    // Carico il file selezionato dall'utente
+    // Carico il file con le note
     try {
         DeserializzaNote lettoreNote(percorsoFile);
         ListaNote risultatoDeserializzazione(
@@ -83,6 +88,7 @@ void MainWindow::load(bool showError) {
         mainWidget = new NoteWidget(list, percorsoFile, this);
         setCentralWidget(mainWidget);
         theWidget->deleteLater();
+        mainWidget->salvato();
     } catch (const DeserializeException& ex) {
         if (showError) {
             QMessageBox messageBox;
@@ -123,8 +129,9 @@ void MainWindow::exportNote() {
 
     QMessageBox messageBox;
     try {
-        saveNote();
+        save();
         mainWidget->setPath(percorsoFile);
+        mainWidget->salvato();
 
         QString messaggio("Sono state esportate ");
         messaggio += QString::number(list.count()) + " note";
@@ -135,7 +142,8 @@ void MainWindow::exportNote() {
     }
 }
 
-void MainWindow::saveNote() {
+void MainWindow::save() {
     SerializzaNote serializzatore(percorsoFile);
     list.serializza(serializzatore);
+    mainWidget->salvato();
 }

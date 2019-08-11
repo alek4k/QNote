@@ -32,7 +32,7 @@ private:
 private slots:
     void importNote();
     void exportNote();
-    void saveNote();
+    void save();
     void exit();
     void load(bool showError = true);
 };

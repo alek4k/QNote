@@ -20,6 +20,8 @@ public:
     explicit NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent = nullptr);
     ~NoteWidget() override;
     void setPath(QString& percorsoFile);
+    void salvato();
+    bool modificheInSospeso() const;
 protected slots:
     void refreshList() const;
     void creaNota();
@@ -55,6 +57,7 @@ private:
     QString path;
 
     int currentRowNota;
+    bool modificato;
 };
 
 #endif // NOTEWIDGET_H
