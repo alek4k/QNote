@@ -1,12 +1,29 @@
 {
     "note": [
         {
-            "dataUltimaModifica": "dom ago 11 17:56:44 2019",
+            "dataUltimaModifica": "dom ago 11 21:31:38 2019",
             "descrizione": "Con QNote puoi organizzare le tue note, aggiungendo tag, immagini e liste di obiettivi!",
             "tag": [
+                "a",
+                "b",
+                "c"
             ],
-            "tipo": "simpleNote",
-            "titolo": "QNote"
+            "tipo": "toDoNote",
+            "titolo": "QNote",
+            "toDoList": [
+                {
+                    "status": false,
+                    "target": "a"
+                },
+                {
+                    "status": false,
+                    "target": "b"
+                },
+                {
+                    "status": false,
+                    "target": "c"
+                }
+            ]
         }
     ]
 }

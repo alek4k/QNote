@@ -143,7 +143,7 @@ void DeserializzaNote::operator()(ListaNote& risultato) {
         const auto tagArray = risultatoSerializzazione["tag"].toArray();
         QVector<QString> tag;
         for(auto it = tagArray.constBegin(); it != tagArray.constEnd(); ++it) {
-            tag.push_front((*it).toString());
+            tag.push_back((*it).toString());
         }
         if (tipo == "simpleNote") {
             risultato.push_back(new SimpleNote(titolo, descrizione, tag, data));
@@ -155,7 +155,7 @@ void DeserializzaNote::operator()(ListaNote& risultato) {
             QList<ToDoItem> toDoList;
             for(auto it = toDoRaw.constBegin(); it != toDoRaw.constEnd(); ++it) {
                 QJsonObject toDoObj = (*it).toObject();
-                toDoList.push_front(ToDoItem(toDoObj["target"].toString(), toDoObj["status"].toBool()));
+                toDoList.push_back(ToDoItem(toDoObj["target"].toString(), toDoObj["status"].toBool()));
             }
             risultato.push_back(new ToDoNote(titolo, descrizione, tag, toDoList, data));
         } else {
