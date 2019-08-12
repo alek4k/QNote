@@ -68,6 +68,8 @@ private:
         }
 
         void remove(const Iterator& it) {
+
+
             size_t firstHalfSize = it.index, secondHalfSize = size - it.index;
 
             T** firstHalf = (firstHalfSize) ? new T*[firstHalfSize] : nullptr;
@@ -236,7 +238,8 @@ public:
     }
 
     void remove(const Iterator& it) {
-        vect.remove(it);
+        if(it.vect == &vect)
+            vect.remove(it);
     }
 
     int count() const {
