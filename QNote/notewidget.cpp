@@ -237,9 +237,20 @@ void NoteWidget::scritturaNota() {
 
     auto nota = static_cast<NoteListWidgetItem*>(items[0])->getNota();
 
+
+
     if (titolo.compare(nota->getTitolo()) != 0) {
         nota->setTitolo(titolo);
-        static_cast<NoteListWidgetItem*>(items[0])->setText(titolo);
+
+        QString toDoCounter = "";
+        auto isTodo = dynamic_cast<ToDoNote*>(&(*nota));
+        if(isTodo) {
+            unsigned int completed = isTodo->targetCompletati();
+            int tot = isTodo->getToDoList().size();
+            toDoCounter = " ("+QString::number(completed)+"/"+QString::number(tot)+")";
+        }
+
+        static_cast<NoteListWidgetItem*>(items[0])->setText(titolo + toDoCounter);
     }
 
     //tutto il resto diventa descrizione della nota
