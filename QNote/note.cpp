@@ -27,20 +27,20 @@ Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Contain
 RicercaTesto::RicercaTesto(const QString& text) : text(text) {}
 
 bool RicercaTesto::operator() (const Nota& elemento) const {
-    QRegExp rx("*"+text+"*");
+    QRegExp rx("*"+text.toLower()+"*");
     rx.setPatternSyntax(QRegExp::Wildcard);
 
     //controllo sui tag
     auto tags = elemento.getTag();
     for (auto cit = tags.cbegin(); cit != tags.cend(); ++cit) {
-        if (rx.exactMatch(*cit)) return true;
+        if (rx.exactMatch((*cit).toLower())) return true;
     }
 
     //controllo sulla descrizione
-    if (rx.exactMatch(elemento.getDescrizione())) return true;
+    if (rx.exactMatch(elemento.getDescrizione().toLower())) return true;
 
     //controllo sul titolo
-    if (rx.exactMatch(elemento.getTitolo())) return true;
+    if (rx.exactMatch(elemento.getTitolo().toLower())) return true;
 
     return false;
 }

@@ -18,6 +18,7 @@ public:
 private:
     struct base_vector {
         base_vector(T** vector = nullptr, const size_t& size = 0) : vector(vector), size(size) {}
+
         base_vector(const base_vector& src) noexcept : size(src.size) {
             T** clonedVector = (size && src.vector) ? new T*[size] : nullptr;
 
@@ -26,11 +27,13 @@ private:
 
             vector = clonedVector;
         }
+
         base_vector(base_vector && move) noexcept : vector(move.vector), size(move.size) {
             // Pulisco quello originale per evitare condivisione di memoria
             move.size = 0;
             move.vector = nullptr;
         }
+
         ~base_vector() {
             for (size_t i = 0; i < size; ++i)
                 delete vector[i];
@@ -48,7 +51,7 @@ private:
             // non aggiungo posti vuoti nel vettore
             pos = (pos > size) ? size : pos;
 
-            size_t firstHalfSize = pos, secondHalfSize = size-pos;
+            size_t firstHalfSize = pos, secondHalfSize = size - pos;
 
             T** firstHalf = (firstHalfSize) ? new T*[firstHalfSize] : nullptr;
             T** secondHalf = (secondHalfSize) ? new T*[secondHalfSize] : nullptr;
@@ -65,6 +68,25 @@ private:
             delete firstHalf;
             delete secondHalf;
         }
+
+        void remove(const Iterator& it) {
+            size_t firstHalfSize = it.index, secondHalfSize = size - it.index;
+
+            T** firstHalf = (firstHalfSize) ? new T*[firstHalfSize] : nullptr;
+            T** secondHalf = (secondHalfSize) ? new T*[secondHalfSize] : nullptr;
+            copy(firstHalf, const_cast<const T**>(vector), firstHalfSize);
+            copy(secondHalf, const_cast<const T**>(&vector[firstHalfSize + 1]), secondHalfSize - 1);
+
+            delete vector;
+            vector = new T*[--size];
+
+            copy(vector, const_cast<const T**>(firstHalf), firstHalfSize);
+            copy(&vector[firstHalfSize], const_cast<const T**>(secondHalf), secondHalfSize - 1);
+
+            delete firstHalf;
+            delete secondHalf;
+        }
+
         bool empty() const noexcept { return !size; }
 
         void swap(base_vector& src) noexcept {
@@ -77,6 +99,7 @@ private:
             src.vector = tempVect;
             src.size = tempSize;
         }
+
         T& operator[](size_t index) noexcept {
             return *(vector[index]);
         }
@@ -247,7 +270,7 @@ public:
         return vect[index];
     }
 
-    bool empty() const noexcept { return !vect.empty(); }
+    bool empty() const { return vect.empty(); }
 
     void push_front(const T& item) noexcept {
         vect.add(item, 0);
@@ -257,11 +280,12 @@ public:
         vect.add(item, count());
     }
 
-    int count() const {
-        return vect.size;
+    void remove(const Iterator& it) {
+        vect.remove(it);
     }
 
-    void remove(const Iterator& it) noexcept {
+    int count() const {
+        return vect.size;
     }
 
     void erase() noexcept {

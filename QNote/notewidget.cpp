@@ -27,7 +27,10 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
 {
     addToDoListButton->setVisible(false);
     addImgButton->setVisible(false);
+    addTagButton->setVisible(false);
     deleteNotaButton->setVisible(false);
+    imageLabel->setVisible(false);
+    todoList->setVisible(false);
     textArea->setReadOnly(true);
 
     //impostazioni grafiche ToDoList
@@ -301,7 +304,7 @@ void NoteWidget::refreshList() const{
         lista->addEntry(*it);
     }
 
-    lista->setCurrentRow(0);
+    //lista->setCurrentRow(0);
 }
 
 void NoteWidget::creaNota() {
