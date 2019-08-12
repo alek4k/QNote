@@ -103,6 +103,12 @@ void MainWindow::load(bool showError) {
 }
 
 void MainWindow::importNote() {
+    if (mainWidget->modificheInSospeso()) {
+        //ho delle modifiche eventualmente da salvare prima di importare un altro file
+        if (QMessageBox::Yes == QMessageBox::question(nullptr, "Modifiche in sospeso", "Salvare tutte le modifiche prima di importare un altro file?"))
+            save();
+    }
+
     QString fileName = QFileDialog::getOpenFileName(this,
             tr("Importa..."), "",
             tr("Note JSON (*.json);;All Files (*)"));

@@ -217,8 +217,11 @@ void NoteWidget::cercaNote(QString ricerca) const {
 }
 
 void NoteWidget::scritturaNota() {
-    //se l'indice di riga è cambiato, sto arrivando da un'altra nota e non devo salvare nulla
-    if (lista->currentRow() != currentRowNota) return;
+    /* se non ho il focus sulla text area quando cambia il testo allora ha solo caricato la
+     * visualizzazione della nota. Per sicurezza guardo anche se l'indice di riga è cambiato:
+     * in questo caso sto arrivando da un'altra nota e non devo salvare nulla
+     */
+    if (lista->currentRow() != currentRowNota || !textArea->hasFocus()) return;
 
     auto items = lista->selectedItems();
 
