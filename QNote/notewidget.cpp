@@ -145,6 +145,8 @@ void NoteWidget::selezioneNota() {
         addToDoListButton->setVisible(false);
         addTagButton->setVisible(false);
         deleteNotaButton->setVisible(false);
+        imageLabel->setVisible(false);
+        todoList->setVisible(false);
     }
     else {
         Nota& t = *static_cast<NoteListWidgetItem*>(items[0])->getNota();
@@ -330,8 +332,6 @@ void NoteWidget::cancellaNota() {
 
 void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     note.remove(it);
-    /*++it;
-    note.insert(it, nota);*/
     note.push_back(*nota);
 
     modificato = true;

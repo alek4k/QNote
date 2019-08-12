@@ -10,11 +10,9 @@ template <typename T>
 class Container {
 public:
     class Iterator;
-    class ConstIterator;
     class Ricerca;
     class Serializzazione;
     class Deserializzazione;
-
 private:
     struct base_vector {
         base_vector(T** vector = nullptr, const size_t& size = 0) : vector(vector), size(size) {}
@@ -63,7 +61,7 @@ private:
 
             copy(vector, const_cast<const T**>(firstHalf), firstHalfSize);
             vector[firstHalfSize] = el.clone();
-            copy(&vector[firstHalfSize+1], const_cast<const T**>(secondHalf), secondHalfSize);
+            copy(&vector[firstHalfSize + 1], const_cast<const T**>(secondHalf), secondHalfSize);
 
             delete firstHalf;
             delete secondHalf;
@@ -155,7 +153,6 @@ public:
             }
         }
 
-        //return risultatiInDisordine;
         return criterioRicerca.getResults(risultatiInDisordine);
     }
 
@@ -224,48 +221,6 @@ public:
         }
     };
 
-    class ConstIterator {
-        friend class Container;
-    private:
-        const Container<T>::base_vector* vect;
-        size_t index;
-
-        ConstIterator(Container<T>::base_vector* vect, size_t index) noexcept : vect(vect), index(index) {}
-
-    public:
-        ConstIterator(const ConstIterator& it) = default;
-
-        virtual ~ConstIterator() = default;
-
-        ConstIterator& operator = (const ConstIterator& it) = default;
-
-        ConstIterator& operator ++() noexcept {
-            ++index;
-
-            return *this;
-        }
-
-        bool operator == (const ConstIterator& it) const noexcept {
-            return (it.vect == vect) && (it.index == index);
-        }
-
-        bool operator != (const ConstIterator& it) const noexcept {
-            return !ConstIterator::operator==(it);
-        }
-
-        T& operator * () const noexcept {
-            return (*vect)[index];
-        }
-
-        T* operator->() const noexcept {
-            return &((vect)[index]);
-        }
-
-        ConstIterator* clone() const noexcept {
-            return new ConstIterator(*this);
-        }
-    };
-
     T& operator[](size_t index) noexcept {
         return vect[index];
     }
@@ -298,14 +253,6 @@ public:
 
     Iterator end() noexcept {
         return Iterator(&vect, count());
-    }
-
-    ConstIterator cbegin() const noexcept {
-        return ConstIterator(&vect, 0);
-    }
-
-    ConstIterator cend() const noexcept {
-        return ConstIterator(&vect, count());
     }
 };
 
