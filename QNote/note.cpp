@@ -140,22 +140,22 @@ void DeserializzaNote::operator()(ListaNote& risultato) {
         QString tipo = risultatoSerializzazione["tipo"].toString();
         const auto tagArray = risultatoSerializzazione["tag"].toArray();
         QVector<QString> tag;
-        for(auto it = tagArray.constBegin(); it != tagArray.constEnd(); ++it) {
-            tag.push_back((*it).toString());
+        for(auto itTag = tagArray.constBegin(); itTag != tagArray.constEnd(); ++itTag) {
+            tag.push_back(itTag->toString());
         }
         if (tipo == "simpleNote") {
-            risultato.push_back(new SimpleNote(titolo, descrizione, tag, data));
+            risultato.push_back(SimpleNote(titolo, descrizione, tag, data));
         } else if (tipo == "imgNote") {
             QString image = risultatoSerializzazione["image"].toString();
-            risultato.push_back(new ImgNote(titolo, descrizione, tag, image, data));
+            risultato.push_back(ImgNote(titolo, descrizione, tag, image, data));
         } else if (tipo == "toDoNote") {
             const auto toDoRaw = risultatoSerializzazione["toDoList"].toArray();
             QList<ToDoItem> toDoList;
-            for(auto it = toDoRaw.constBegin(); it != toDoRaw.constEnd(); ++it) {
-                QJsonObject toDoObj = (*it).toObject();
+            for(auto itTodo = toDoRaw.constBegin(); itTodo != toDoRaw.constEnd(); ++itTodo) {
+                QJsonObject toDoObj = itTodo->toObject();
                 toDoList.push_back(ToDoItem(toDoObj["target"].toString(), toDoObj["status"].toBool()));
             }
-            risultato.push_back(new ToDoNote(titolo, descrizione, tag, toDoList, data));
+            risultato.push_back(ToDoNote(titolo, descrizione, tag, toDoList, data));
         } else {
             throw DeserializeException("Tipologia nota non riconosciuta");
         }

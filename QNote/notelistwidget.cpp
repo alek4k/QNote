@@ -33,11 +33,9 @@ Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
 }
 
 void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
-    if (!it.isValid()) return;
-
     QListWidgetItem *item = new NoteListWidgetItem(this, it);
 
-    QString titolo = (*it).getTitolo();
+    QString titolo = it->getTitolo();
     if (auto toDoNoteInsert = dynamic_cast<const ToDoNote*>(&(*it))) {
         unsigned int completed = toDoNoteInsert->targetCompletati();
         int tot = toDoNoteInsert->getToDoList().size();

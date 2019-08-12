@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     load(false);
     if (list.empty()) {
-        list.push_back(new SimpleNote("QNote", "Con QNote puoi organizzare le tue note, aggiungendo tag, immagini e liste di obiettivi!"));
+        list.push_back(SimpleNote("QNote", "Con QNote puoi organizzare le tue note, aggiungendo tag, immagini e liste di obiettivi!"));
 
         mainWidget = new NoteWidget(list, percorsoFile, this);
 

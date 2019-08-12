@@ -21,9 +21,9 @@ friend class NoteListWidget;
 private:
     ListaNote::Iterator it;
     NoteListWidgetItem(QListWidget * parent, const ListaNote::Iterator& it);
-    QWidget *w;
-    QLabel *tags;
-    QVBoxLayout *hl;
+    QWidget *w = nullptr;
+    QLabel *tags = nullptr;
+    QVBoxLayout *hl = nullptr;
 public:
     ListaNote::Iterator getNota() const;
 };

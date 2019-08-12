@@ -305,7 +305,7 @@ void NoteWidget::refreshList() const{
 }
 
 void NoteWidget::creaNota() {
-    this->note.push_front(new SimpleNote("Nuova nota..."));
+    this->note.push_front(SimpleNote("Nuova nota..."));
     modificato = true;
     refreshList();
 }
@@ -329,7 +329,7 @@ void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     note.remove(it);
     /*++it;
     note.insert(it, nota);*/
-    note.push_back(nota);
+    note.push_back(*nota);
 
     modificato = true;
 
