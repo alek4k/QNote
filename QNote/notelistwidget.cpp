@@ -1,26 +1,13 @@
 #include "notelistwidget.h"
 #include "container.h"
 
-NoteListWidget::NoteListWidget(QWidget* parent) : QListWidget(parent)/*, w(new QWidget(this)), tags(new QLabel(this)), hl(new QVBoxLayout(this))*/ {
+NoteListWidget::NoteListWidget(QWidget* parent) : QListWidget(parent) {
     //permetto la selezione di una sola nota per volta (niente combo Ctrl/Shift)
     setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
 NoteListWidgetItem::NoteListWidgetItem(QListWidget * parent, const Container<Nota>::Iterator& it)
-    : QListWidgetItem(parent), it(it) {}
-
-
-Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
-    return it;
-}
-
-void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
-    if (!it.isValid()) return;
-
-    QVBoxLayout* hl = new QVBoxLayout(this);
-    QWidget* w = new QWidget(this);
-    QLabel* tags = new QLabel(this);
-
+    : QListWidgetItem(parent), it(it), w(new QWidget(parent)), tags(new QLabel(parent)), hl(new QVBoxLayout(parent)) {
     //tags
     for (int i = 0; i < it->getTag().length(); i++) {
         if (i==0)
@@ -36,6 +23,18 @@ void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
     hl->addWidget(tags);
     w->setLayout(hl);
 
+    this->setSizeHint(w->sizeHint());
+
+    parent->setItemWidget(this, w);
+}
+
+Container<Nota>::Iterator NoteListWidgetItem::getNota() const {
+    return it;
+}
+
+void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
+    if (!it.isValid()) return;
+
     QListWidgetItem *item = new NoteListWidgetItem(this, it);
 
     QString titolo = (*it).getTitolo();
@@ -48,9 +47,5 @@ void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
     item->setText(titolo);
     item->setFont(QFont("Arial", 12, QFont::Normal));
 
-    item->setSizeHint(w->sizeHint());
-
     addItem(item);
-
-    setItemWidget(item, w);
 }
