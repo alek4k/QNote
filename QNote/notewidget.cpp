@@ -304,7 +304,7 @@ void NoteWidget::refreshList() const{
         lista->addEntry(*it);
     }
 
-    //lista->setCurrentRow(0);
+    lista->setCurrentRow(0);
 }
 
 void NoteWidget::creaNota() {
