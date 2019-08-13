@@ -132,7 +132,7 @@ void DeserializzaNote::operator()(ListaNote& risultato) {
 
     // Scorro tutte le note presenti nel JSON
     const auto note = doc.object()["note"].toArray();
-    for (auto it = note.cbegin(); it != note.cend(); ++it) {
+    for (auto it = note.constBegin(); it != note.constEnd(); ++it) {
         const auto risultatoSerializzazione = it->toObject();
 
         QDateTime data = QDateTime::fromString(risultatoSerializzazione["dataUltimaModifica"].toString());
