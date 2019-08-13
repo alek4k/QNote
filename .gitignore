@@ -9,3 +9,7 @@
 ui_*.h
 
 build-QNote-Desktop-Debug/Makefile
+
+build-QNote-Desktop-Debug/QNote
+
+QNote/QNote\.pro\.user
