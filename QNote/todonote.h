@@ -9,21 +9,44 @@ class ToDoNote : public Nota
 private:
     QList<ToDoItem> toDoList;
 public:
-    ToDoNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QList<ToDoItem>& toDoList = QList<ToDoItem>(), const QDateTime& data = QDateTime::currentDateTime()) noexcept;
+    /**
+     * @brief ToDoNote Costruttore di note con lista di obiettivi (ToDoItem)
+     * @param titolo Titolo della nota
+     * @param descrizione Descrizione della nota
+     * @param tag Contenitore di tag
+     * @param toDoList Contenitore di obiettivi
+     * @param data Data di creazione della nota (orario corrente di default)
+     */
+    ToDoNote(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QList<ToDoItem>& toDoList = QList<ToDoItem>(), const QDateTime& data = QDateTime::currentDateTime());
 
-    ToDoNote(const ToDoNote&) noexcept;
+    ToDoNote(const ToDoNote&);
 
     ToDoNote& operator = (const ToDoNote&) = delete;
 
     ~ToDoNote() override = default;
 
-    ToDoNote* clone() const noexcept override;
+    /**
+     * @brief clone Clona la nota in una nuova nota identica
+     * @return la copia della nota
+     */
+    ToDoNote* clone() const override;
 
-    QList<ToDoItem> getToDoList() const noexcept;
+    /**
+     * @brief getToDoList
+     * @return Contenitore di obiettivi (ToDoItem) della nota
+     */
+    QList<ToDoItem> getToDoList() const;
 
-    void setToDoList(const QList<ToDoItem>&) noexcept;
+    /**
+     * @brief setToDoList Imposta gli obiettivi legati alla nota
+     */
+    void setToDoList(const QList<ToDoItem>&);
 
-    unsigned int targetCompletati() const noexcept;
+    /**
+     * @brief targetCompletati
+     * @return Il numero di obiettivi completati
+     */
+    unsigned int targetCompletati() const;
 };
 
 #endif // TODOLIST_H

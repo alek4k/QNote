@@ -2,16 +2,19 @@
 
 ToDoListWidget::ToDoListWidget(QWidget *parent) : QListWidget(parent)
 {
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    //permetto la selezione di un solo obiettivo per volta (niente combo Ctrl/Shift)
+    setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
 ToDoListWidgetItem::ToDoListWidgetItem(ToDoItem* item)
     : item(item) {
+    //imposto il testo dell'elemento della lista
     setText(item->getTarget());
 }
 
 ToDoItem* ToDoListWidgetItem::getToDo() const
 {
+    //ritorno il puntatore all'obiettivo dell'elemento della lista
     return item;
 }
 

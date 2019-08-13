@@ -1,23 +1,24 @@
 #include "note.h"
 #include <iostream>
 
+//VisualizzazioneOrdinata
 Container<const ListaNote::Iterator> VisualizzazioneOrdinata::getResults(Container<const ListaNote::Iterator>& risultatiDisordinati) const {
     auto daRiordinare = Container<const ListaNote::Iterator>(risultatiDisordinati);
     Container<const ListaNote::Iterator> riordinati;
 
     while (!daRiordinare.empty()) {
         ListaNote::Iterator maggiore = *(daRiordinare.begin());
-        auto daje = daRiordinare.begin();
+        auto tracking = daRiordinare.begin();
 
         for (auto it = daRiordinare.begin(); it != daRiordinare.end(); ++it) {
             if ((*it)->getDataModifica() > maggiore->getDataModifica()) {
                 maggiore = *it;
-                daje = it;
+                tracking = it;
             }
         }
 
         riordinati.push_back(maggiore);
-        daRiordinare.remove(daje);
+        daRiordinare.remove(tracking);
     }
 
     return riordinati;
@@ -45,10 +46,10 @@ bool RicercaTesto::operator() (const Nota& elemento) const {
     return false;
 }
 
-SerializeException::SerializeException(const std::string& msg) noexcept
+SerializeException::SerializeException(const std::string& msg)
     : std::runtime_error(msg) {}
 
-DeserializeException::DeserializeException(const std::string& msg) noexcept
+DeserializeException::DeserializeException(const std::string& msg)
     : std::runtime_error(msg) {}
 
 SerializzaNote::SerializzaNote(const QString& path)

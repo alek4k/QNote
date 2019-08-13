@@ -8,7 +8,7 @@ NoteListWidget::NoteListWidget(QWidget* parent) : QListWidget(parent) {
 
 NoteListWidgetItem::NoteListWidgetItem(QListWidget * parent, const Container<Nota>::Iterator& it)
     : QListWidgetItem(parent), it(it), w(new QWidget(parent)), tags(new QLabel(parent)), hl(new QVBoxLayout(parent)) {
-    //tags
+    //tags da visualizzare sotto al titolo
     for (int i = 0; i < it->getTag().length(); i++) {
         if (i==0)
             tags->setText(it->getTag()[i]);
@@ -36,6 +36,7 @@ void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
     QListWidgetItem *item = new NoteListWidgetItem(this, it);
 
     QString titolo = it->getTitolo();
+    //se si tratta di una todonote visualizzo anche il conteggio di obiettivi completati
     if (auto toDoNoteInsert = dynamic_cast<const ToDoNote*>(&(*it))) {
         unsigned int completed = toDoNoteInsert->targetCompletati();
         int tot = toDoNoteInsert->getToDoList().size();
@@ -45,5 +46,6 @@ void NoteListWidget::addEntry(const ListaNote::Iterator& it) {
     item->setText(titolo);
     item->setFont(QFont("Arial", 12, QFont::Normal));
 
+    //aggiungo l'elemento alla lista
     addItem(item);
 }

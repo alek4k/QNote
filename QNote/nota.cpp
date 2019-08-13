@@ -1,17 +1,17 @@
 #include "nota.h"
 
-Nota::Nota(const QString& title, const QString& text, const QVector<QString>& tag, const QDateTime& data) noexcept
+Nota::Nota(const QString& title, const QString& text, const QVector<QString>& tag, const QDateTime& data)
     : titolo(title), descrizione(text), tag(tag), dataUltimaModifica(data) {}
 
-QString Nota::getTitolo() const noexcept {
+QString Nota::getTitolo() const {
     return titolo;
 }
 
-QString Nota::getDescrizione() const noexcept {
+QString Nota::getDescrizione() const {
     return descrizione;
 }
 
-QDateTime Nota::getDataModifica() const noexcept {
+QDateTime Nota::getDataModifica() const {
     return dataUltimaModifica;
 }
 
@@ -19,18 +19,18 @@ QVector<QString> Nota::getTag() const {
     return tag;
 }
 
-void Nota::setTitolo(const QString& title) noexcept {
+void Nota::setTitolo(const QString& title) {
     titolo = title;
 }
 
-void Nota::setDescrizione(const QString& text) noexcept {
+void Nota::setDescrizione(const QString& text) {
     descrizione = text;
 }
 
-void Nota::setDataModifica(const QDateTime& dataModifica) noexcept {
+void Nota::setDataModifica(const QDateTime& dataModifica) {
     dataUltimaModifica = dataModifica;
 }
 
-void Nota::setTag(const QVector<QString>& tag) noexcept {
+void Nota::setTag(const QVector<QString>& tag) {
     this->tag = tag;
 }

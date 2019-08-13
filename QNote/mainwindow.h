@@ -33,6 +33,7 @@ private:
 
     void closeEvent(QCloseEvent *event);
 
+    //widget principale
     NoteWidget * mainWidget;
 
     ListaNote list;

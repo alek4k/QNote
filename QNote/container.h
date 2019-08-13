@@ -14,10 +14,23 @@ public:
     class Serializzazione;
     class Deserializzazione;
 private:
+    /**
+     * @brief struttura che rappresenta un vettore e la sua dimensione
+     * @struct base_vector
+     */
     struct base_vector {
+        /**
+         * @brief base_vector costruttore
+         * @param vector
+         * @param size dimensione del vettore
+         */
         base_vector(T** vector = nullptr, const size_t& size = 0) : vector(vector), size(size) {}
 
-        base_vector(const base_vector& src) noexcept : size(src.size) {
+        /**
+         * @brief base_vector costruttore di copia
+         * @param src base_vector da clonare
+         */
+        base_vector(const base_vector& src) : size(src.size) {
             T** clonedVector = (size && src.vector) ? new T*[size] : nullptr;
 
             for (size_t i = 0; i < size; ++i)
@@ -26,12 +39,19 @@ private:
             vector = clonedVector;
         }
 
-        base_vector(base_vector && move) noexcept : vector(move.vector), size(move.size) {
+        /**
+         * @brief base_vector costruttore di spostamento
+         * @param move base_vector da spostare
+         */
+        base_vector(base_vector && move) : vector(move.vector), size(move.size) {
             // Pulisco quello originale per evitare condivisione di memoria
             move.size = 0;
             move.vector = nullptr;
         }
 
+        /**
+          * @brief distruttore del vettore
+          */
         ~base_vector() {
             for (size_t i = 0; i < size; ++i)
                 delete vector[i];
@@ -39,14 +59,25 @@ private:
             delete vector;
         }
 
+        /**
+         * @brief copy copia contenuto da un vettore di origine ad uno di destinazione
+         * @param dest vettore di destinazione
+         * @param src vettore di origine
+         * @param dim dimensione da copiare
+         */
         static void copy(T** dest, const T** src, size_t dim) {
             for (size_t i = 0; i < dim; ++i) {
                 dest[i] = const_cast<T*>(src[i]);
             }
         }
 
+        /**
+         * @brief add aggiunge un elemento in una determinata posizione del vettore
+         * @param el elemento da aggiungere
+         * @param pos posizione in cui aggiungere l'elemento
+         */
         void add(const T& el, size_t pos) {
-            // non aggiungo posti vuoti nel vettore
+            // non aggiungo posti vuoti nel vettore (al massimo aggiungo in posizione pari a size)
             pos = (pos > size) ? size : pos;
 
             size_t firstHalfSize = pos, secondHalfSize = size - pos;
@@ -67,9 +98,11 @@ private:
             delete secondHalf;
         }
 
+        /**
+         * @brief remove rimuove un elemento dal vettore
+         * @param it iteratore che indica l'elemento da rimuovere
+         */
         void remove(const Iterator& it) {
-
-
             size_t firstHalfSize = it.index, secondHalfSize = size - it.index;
 
             T** firstHalf = (firstHalfSize) ? new T*[firstHalfSize] : nullptr;
@@ -87,9 +120,17 @@ private:
             delete secondHalf;
         }
 
-        bool empty() const noexcept { return !size; }
+        /**
+         * @brief empty
+         * @return true se il vettore è vuoto, false altrimenti
+         */
+        bool empty() const { return !size; }
 
-        void swap(base_vector& src) noexcept {
+        /**
+         * @brief swap scambio di contenuto (e dimensione) tra due vettori
+         * @param src vettore da scambiare
+         */
+        void swap(base_vector& src) {
             auto tempVect = vector;
             auto tempSize = size;
 
@@ -100,7 +141,12 @@ private:
             src.size = tempSize;
         }
 
-        T& operator[](size_t index) noexcept {
+        /**
+         * @brief operator [] overload dell'operatore []
+         * @param index indice dell'elemento a cui si vuole accedere
+         * @return elemento in posizione index
+         */
+        T& operator[](size_t index) {
             return *(vector[index]);
         }
 
@@ -113,10 +159,23 @@ private:
 public:
     Container() = default;
 
-    Container(Container<T>&& move) noexcept : vect(base_vector(std::move(move.vect))) {}
+    /**
+     * @brief Container costruttore di spostamento
+     * @param move Container da spostare e che viene poi invalidato
+     */
+    Container(Container<T>&& move) : vect(base_vector(std::move(move.vect))) {}
 
-    Container(const Container<T>& src) noexcept : vect(src.vect) {}
+    /**
+     * @brief Container costruttore di copia
+     * @param src Container da clonare
+     */
+    Container(const Container<T>& src) : vect(src.vect) {}
 
+    /**
+     * @brief operator = overload operatore = per copia profonda
+     * @param src Container da clonare
+     * @return copia del Container src
+     */
     Container& operator=(const Container<T>& src) {
         if (this != &src) {
             vect = base_vector(src);
@@ -125,27 +184,46 @@ public:
         return *this;
     }
 
-    void swap(Container<T>& other) noexcept {
+    /**
+     * @brief swap effettua lo scambio di contenuto tra due Container
+     * @param other Container da scambiare
+     */
+    void swap(Container<T>& other) {
         other.vect.swap(vect);
     }
 
     virtual ~Container() = default;
 
+    /**
+     * @brief classe base astratta per effettuare ricerche di elementi
+     */
     class Ricerca {
     public:
         Ricerca() = default;
 
         Ricerca(const Ricerca&) = delete;
 
-        // Implementa la ricerca (un risultato è presente? SI/NO)
+        /**
+         * @brief operator () implementa la ricerca
+         * @return true se l'elemento deve essere restituito dalla ricerca, false altrimenti
+         */
         virtual bool operator()(const T&) const { return true; }
 
-        // Implementa l'ordine dei risultati di ricerca
-        virtual Container<const Iterator> getResults(Container<const Iterator> &/*&*/ risultatiDisordinati) const {
+        /**
+         * @brief getResults implementa l'ordine dei risultati di ricerca
+         * @param risultatiDisordinati Container di iteratori agli elementi restituiti dalla ricerca non ordinati
+         * @return Container di iteratori agli elementi restituiti dalla ricerca e ordinati secondo necessità
+         */
+        virtual Container<const Iterator> getResults(Container<const Iterator>& risultatiDisordinati) const {
             return risultatiDisordinati;
         }
     };
 
+    /**
+     * @brief simpleSearch cerca elementi nel container
+     * @param criterioRicerca criterio che devono rispettare gli elementi per figurare tra i risultati di ricerca
+     * @return Container di iteratori agli elementi corrispondenti alla ricerca effettuata
+     */
     Container<const Iterator> simpleSearch(const Ricerca& criterioRicerca) {
         Container<const Iterator> risultatiInDisordine;
         for (auto it = begin(); it != end(); ++it)
@@ -158,36 +236,56 @@ public:
         return criterioRicerca.getResults(risultatiInDisordine);
     }
 
+    /**
+     * @brief classe base astratta per serializzare un elemento
+     */
     class Serializzazione {
     public:
         virtual ~Serializzazione() = default;
         virtual void operator() (const T& elemento) = 0;
     };
 
+    /**
+     * @brief classe base astratta per deserializzare un elemento
+     */
     class Deserializzazione {
     public:
         virtual ~Deserializzazione() = default;
         virtual void operator()(Container<T>& risultato) = 0;
     };
 
+    /**
+     * @brief serializza Serializza il Container
+     * @param cs modalità di serializzazione
+     */
     void serializza(Serializzazione& cs) {
         for (auto it = begin(); it != end(); ++it)
             cs(*it);
     }
 
+    /**
+     * @brief deserializza Deserializza un Container
+     * @param cd modalità di deserializzazione
+     * @return Container deserializzato di elementi di tipo T
+     */
     static Container<T> deserializza(Deserializzazione& cd) {
         Container<T> risultato;
         cd(risultato);
         return risultato;
     }
 
+    /**
+     * @brief applica iteratori sul Container offrendo accesso e modifica degli elementi
+     */
     class Iterator {
         friend class Container;
     private:
+        //Iterator mantiene un puntatore al vettore del Container
         Container<T>::base_vector* vect;
+        //indice del vettore a cui punta l'iteratore
         size_t index;
 
-        Iterator(Container<T>::base_vector* vect, size_t index) noexcept : vect(vect), index(index) {}
+        Iterator(Container<T>::base_vector* vect, size_t index) : vect(vect), index(index) {}
 
     public:
         Iterator(const Iterator& it) = default;
@@ -196,65 +294,99 @@ public:
 
         Iterator& operator = (const Iterator& it) = default;
 
-        Iterator& operator ++() noexcept {
+        //incremento l'indice per avanzare nel vettore
+        Iterator& operator ++() {
             ++index;
 
             return *this;
         }
 
-        bool operator == (const Iterator& it) const noexcept {
+        bool operator == (const Iterator& it) const {
             return (it.vect == vect) && (it.index == index);
         }
 
-        bool operator != (const Iterator& it) const noexcept {
+        bool operator != (const Iterator& it) const {
             return !Iterator::operator==(it);
         }
 
-        T& operator * () const noexcept {
+        //accedo all'elemento del vettore in posizione corrispondente all'indice dell'iteratore
+        T& operator * () const {
             return (*vect)[index];
         }
 
-        T* operator->() const noexcept {
+        T* operator->() const {
             return &((*vect)[index]);
         }
 
-        Iterator* clone() const noexcept {
+        Iterator* clone() const {
             return new Iterator(*this);
         }
     };
 
-    T& operator[](size_t index) noexcept {
+    T& operator[](size_t index) {
         return vect[index];
     }
 
+    /**
+     * @brief empty
+     * @return true se il Container è vuoto, false altrimenti
+     */
     bool empty() const { return vect.empty(); }
 
-    void push_front(const T& item) noexcept {
+    /**
+     * @brief push_front Inserisce un elemento all'inizio del vettore
+     * @param item elemento da inserire
+     */
+    void push_front(const T& item) {
         vect.add(item, 0);
     }
 
-    void push_back(const T& item) noexcept {
+    /**
+     * @brief push_back Inserisce un elemento alla fine del vettore
+     * @param item elemento da inserire
+     */
+    void push_back(const T& item) {
         vect.add(item, count());
     }
 
+    /**
+     * @brief remove Rimuove un elemento dal vettore
+     * @param it Iteratore che indica l'elemento da rimuovere dal Container
+     */
     void remove(const Iterator& it) {
+        //controllo che l'iteratore sia del container corrente
         if(it.vect == &vect)
             vect.remove(it);
     }
 
+    /**
+     * @brief count Conta gli elementi del Container
+     * @return il numero di elementi nel Container
+     */
     int count() const {
         return vect.size;
     }
 
-    void erase() noexcept {
+    /**
+     * @brief erase Rimuove tutti gli elementi dal Container
+     */
+    void erase() {
         vect = base_vector();
     }
 
-    Iterator begin() noexcept {
+    /**
+     * @brief begin
+     * @return Iterator all'inizio del vettore
+     */
+    Iterator begin() {
         return Iterator(&vect, 0);
     }
 
-    Iterator end() noexcept {
+    /**
+     * @brief end
+     * @return Iterator alla fine del vettore
+     */
+    Iterator end() {
         return Iterator(&vect, count());
     }
 };

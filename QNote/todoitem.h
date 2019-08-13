@@ -8,20 +8,39 @@
 class ToDoItem
 {
 private:
+    //nome dell'obiettivo
     QString target;
+    //stato dell'obiettivo (completato? SI/NO)
     bool completato;
 public:
-    ToDoItem(const QString& target, const bool& completato = false) noexcept;
+    /**
+     * @brief ToDoItem Singolo obiettivo
+     * @param target Titolo dell'obiettivo
+     * @param completato Stato dell'obiettivo (true = completato; di default = false)
+     */
+    ToDoItem(const QString& target, const bool& completato = false);
 
-    ToDoItem(const ToDoItem&) noexcept = default;
+    ToDoItem(const ToDoItem&) = default;
 
     virtual ~ToDoItem() = default;
 
-    void updateItem(const QString& target, const bool& completato) noexcept;
+    /**
+     * @brief updateItem Aggiorna obiettivo
+     * @param target Nuovo titolo per l'obiettivo
+     * @param completato Nuovo stato dell'obiettivo
+     */
+    void updateItem(const QString& target, const bool& completato);
 
-    QString getTarget() const noexcept;
+    /**
+     * @brief getTarget
+     * @return Il titolo dell'obiettivo
+     */
+    QString getTarget() const;
 
-    operator bool () const noexcept;
+    /**
+     * @brief overload bool operator: True se l'obiettivo è stato completato, False altrimenti
+     */
+    operator bool () const;
 };
 
 #endif // TODOITEM_H

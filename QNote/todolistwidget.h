@@ -13,6 +13,10 @@ private:
     QList<ToDoItem>* toDoList;
 public:
     ToDoListWidget(QWidget *parent = nullptr);
+    /**
+     * @brief addEntry Inserisce un obiettivo nella lista
+     * @param item Puntatore all'obiettivo da aggiungere alla lista
+     */
     void addEntry(ToDoItem* item);
 };
 

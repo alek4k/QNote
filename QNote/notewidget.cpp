@@ -25,6 +25,7 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
       path(percorsoFile),
       modificato(false)
 {
+    // Mi assicuro che inizialmente i vari widget non siano visibili
     addToDoListButton->setVisible(false);
     addImgButton->setVisible(false);
     addTagButton->setVisible(false);
@@ -33,42 +34,44 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     todoList->setVisible(false);
     textArea->setReadOnly(true);
 
-    //impostazioni grafiche ToDoList
+    // SCRITTURA TESTO SU CAMPO DI RICERCA
+    connect(searchBar, SIGNAL(textChanged(QString)), this, SLOT(cercaNote(QString)));
+
+    // SALVATAGGIO AUTOMATICO SCRITTURA DESCRIZIONE NOTA
+    connect(textArea, SIGNAL(textChanged()), this, SLOT(scritturaNota()));
+
+    // SALVATAGGIO AUTOMATICO OBIETTIVI TO-DO LIST
+    connect(todoList, SIGNAL(itemChanged(QListWidgetItem*)),
+            this, SLOT(highlightChecked(QListWidgetItem*)));
+
+    // PRESSIONE PULSANTE ELIMINAZIONE NOTA
+    connect(deleteNotaButton, SIGNAL(clicked()), this, SLOT(cancellaNota()));
+
+    // PRESSIONE PULSANTE CREAZIONE NOTA
+    connect(addNotaButton, SIGNAL(clicked()), this, SLOT(creaNota()));
+
+    // PRESSIONE PULSANTE AGGIUNTA TAG
+    connect(addTagButton, SIGNAL(clicked()), this, SLOT(addTag()));
+
+    // PRESSIONE PULSANTE AGGIUNTA TODO LIST
+    connect(addToDoListButton, SIGNAL(clicked()), this, SLOT(trasformaInObiettivo()));
+
+    // PRESSIONE PULSANTE AGGIUNTA IMMAGINE
+    connect(addImgButton, SIGNAL(clicked()), this, SLOT(imageOpen()));
+
+    // CAMBIO SELEZIONE NOTA DALLA LISTA
+    connect(lista, SIGNAL(itemSelectionChanged()), this, SLOT(selezioneNota()), Qt::QueuedConnection);
+
+    // IMPOSTAZIONI GENERALI WIDGET
+
+    // Impostazioni grafiche ToDoList
     todoList->setFocusPolicy(Qt::NoFocus);
     QPalette p = todoList->palette();
     p.setColor(QPalette::Highlight, Qt::transparent);
     p.setColor(QPalette::Active, QPalette::Highlight, Qt::gray);
     todoList->setPalette(p);
 
-    //ACTION SCRITTURA TESTO SU CAMPO DI RICERCA
-    connect(searchBar, SIGNAL(textChanged(QString)), this, SLOT(cercaNote(QString)));
-
-    //SALVATAGGIO AUTOMATICO SCRITTURA DESCRIZIONE NOTA
-    connect(textArea, SIGNAL(textChanged()), this, SLOT(scritturaNota()));
-
-    //SALVATAGGIO AUTOMATICO OBIETTIVI TO-DO LIST
-    connect(todoList, SIGNAL(itemChanged(QListWidgetItem*)),
-            this, SLOT(highlightChecked(QListWidgetItem*)));
-
-    //PRESSIONE PULSANTE ELIMINAZIONE NOTA
-    connect(deleteNotaButton, SIGNAL(clicked()), this, SLOT(cancellaNota()));
-
-    //PRESSIONE PULSANTE CREAZIONE NOTA
-    connect(addNotaButton, SIGNAL(clicked()), this, SLOT(creaNota()));
-
-    //PRESSIONE PULSANTE AGGIUNTA TAG
-    connect(addTagButton, SIGNAL(clicked()), this, SLOT(addTag()));
-
-    //PRESSIONE PULSANTE AGGIUNTA TODO LIST
-    connect(addToDoListButton, SIGNAL(clicked()), this, SLOT(trasformaInObiettivo()));
-
-    //PRESSIONE PULSANTE AGGIUNTA IMMAGINE
-    connect(addImgButton, SIGNAL(clicked()), this, SLOT(imageOpen()));
-
-    //CAMBIO SELEZIONE NOTA DALLA LISTA
-    connect(lista, SIGNAL(itemSelectionChanged()), this, SLOT(selezioneNota()), Qt::QueuedConnection);
-
-    //qualche miglioria grafica per l'area di testo
+    // Qualche miglioria grafica per l'area di testo
     textArea->setStyleSheet("QPlainTextEdit { "
                                "padding-left:20; "
                                "padding-top:20; "
@@ -127,13 +130,22 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
 }
 
 NoteWidget::~NoteWidget() {
-    const auto & sentinella = todoList->item(0);
+    //Il primo obiettivo della todoList è sempre un nuovo obiettivo temporaneo, lo elimino nel distruttore
+    const auto& sentinella = todoList->item(0);
     delete sentinella;
 }
 
+/**
+ * @brief Quando cambia la nota selezionata dalla lista sistemo i widget di competenza
+ */
 void NoteWidget::selezioneNota() {
     auto items = lista->selectedItems();
     if (items.length() != 1) {
+        /* Non potranno mai essere selezionati 2 o più elementi dalla lista contemporaneamente
+         * per le impostazioni della lista stessa. Tuttavia (in fase di ricerca principalmente)
+         * posso non averne selezionata nemmeno una. Allora in questo caso sistemo tutti i
+         * widget, pulendoli e nascondendoli. In particolare la textarea diventa non scrivibile.
+         */
         imageLabel->clear();
         colonnaDx->removeWidget(imageLabel);
         colonnaDx->removeWidget(todoList);
@@ -153,6 +165,7 @@ void NoteWidget::selezioneNota() {
 
         QString titolo = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getTitolo();
         QString descr = static_cast<NoteListWidgetItem*>(items[0])->getNota()->getDescrizione();
+        //prima riga sempre per il titolo
         textArea->setPlainText(titolo + "\n" + descr);
 
         currentRowNota = lista->currentRow();
@@ -208,23 +221,33 @@ void NoteWidget::selezioneNota() {
     }
 }
 
+/**
+ * @brief NoteWidget::cercaNote Ricerca tra le note del Container
+ * @param ricerca I termini da ricercare nei titoli, descrizioni e tag delle note
+ */
 void NoteWidget::cercaNote(QString ricerca) const {
+    //se la ricerca viene azzerata, refresh e mostro tutte le note di nuovo
     if (ricerca.compare("") == 0) {
         refreshList();
         return;
     }
 
     lista->clear();
+    //chiamo RicercaTesto coi termini cercati
     auto queryResult = this->note.simpleSearch(RicercaTesto(QString(ricerca)));
     for (auto it = queryResult.begin(); it != queryResult.end(); ++it) {
         lista->addEntry(*it);
     }
 }
 
+/**
+ * @brief Aggiornamento titolo e descrizione delle note
+ */
 void NoteWidget::scritturaNota() {
-    /* se non ho il focus sulla text area quando cambia il testo allora ha solo caricato la
+    /* Se non ho il focus sulla text area quando cambia il testo allora ha solo caricato la
      * visualizzazione della nota. Per sicurezza guardo anche se l'indice di riga è cambiato:
-     * in questo caso sto arrivando da un'altra nota e non devo salvare nulla
+     * in questo caso sto arrivando da un'altra nota e non devo salvare nulla.
+     * Evito salvataggi inutili.
      */
     if (lista->currentRow() != currentRowNota || !textArea->hasFocus()) return;
 
@@ -237,11 +260,13 @@ void NoteWidget::scritturaNota() {
 
     auto nota = static_cast<NoteListWidgetItem*>(items[0])->getNota();
 
-
-
     if (titolo.compare(nota->getTitolo()) != 0) {
+        //aggiorno il titolo della nota
         nota->setTitolo(titolo);
 
+        /* Nel caso di todonote devo sempre rimettere il conteggio degli obiettivi completati
+         * ovviamente solo al titolo dell'elemento della lista, non alla nota vera e propria
+         */
         QString toDoCounter = "";
         auto isTodo = dynamic_cast<ToDoNote*>(&(*nota));
         if(isTodo) {
@@ -250,6 +275,7 @@ void NoteWidget::scritturaNota() {
             toDoCounter = " ("+QString::number(completed)+"/"+QString::number(tot)+")";
         }
 
+        //aggiorno il titolo dell'elemento della lista
         static_cast<NoteListWidgetItem*>(items[0])->setText(titolo + toDoCounter);
     }
 
@@ -263,6 +289,9 @@ void NoteWidget::scritturaNota() {
     //if (currentRowNota != 0) refreshList();
 }
 
+/**
+ * @brief La nota viene eliminata e ricreata sotto forma di ToDoNote
+ */
 void NoteWidget::trasformaInObiettivo() {
     auto items = lista->selectedItems();
     ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
@@ -270,6 +299,10 @@ void NoteWidget::trasformaInObiettivo() {
     aggiornaNota(it, nuovaToDo);
 }
 
+/**
+ * @brief Un obiettivo della ToDoList è stato modificato
+ * @param item Obiettivo modificato
+ */
 void NoteWidget::highlightChecked(QListWidgetItem *item) {
     auto changed = static_cast<ToDoListWidgetItem*>(item);
     auto items = lista->selectedItems();
@@ -306,6 +339,9 @@ void NoteWidget::highlightChecked(QListWidgetItem *item) {
     refreshList();
 }
 
+/**
+ * @brief Ricarica la lista delle note ordinandole dalla più recente (guardo la data di modifica)
+ */
 void NoteWidget::refreshList() const{
     lista->clear();
     textArea->clear();
@@ -317,15 +353,22 @@ void NoteWidget::refreshList() const{
         lista->addEntry(*it);
     }
 
+    //apertura automatica della prima nota della lista
     lista->setCurrentRow(0);
 }
 
+/**
+ * @brief Crea una nuova nota (SimpleNote)
+ */
 void NoteWidget::creaNota() {
     this->note.push_front(SimpleNote("Nuova nota..."));
     modificato = true;
     refreshList();
 }
 
+/**
+ * @brief Rimuove una nota
+ */
 void NoteWidget::cancellaNota() {
     auto items = lista->selectedItems();
 
@@ -341,6 +384,11 @@ void NoteWidget::cancellaNota() {
     }
 }
 
+/**
+ * @brief Rimuove una nota e ne aggiunge una nuova
+ * @param it Iteratore alla nota da rimuovere
+ * @param nota Puntatore alla nuova nota da aggiungere al vettore
+ */
 void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     note.remove(it);
     note.push_back(*nota);
@@ -350,6 +398,9 @@ void NoteWidget::aggiornaNota(ListaNote::Iterator& it, Nota* nota) {
     refreshList();
 }
 
+/**
+ * @brief Aggiunge tag alla nota controllando che non sia già presente
+ */
 void NoteWidget::addTag() {
     auto items = lista->selectedItems();
     ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();
@@ -377,6 +428,11 @@ void NoteWidget::addTag() {
     }
 }
 
+/**
+ * @brief Impostazioni finestra selezione file immagine
+ * @param dialog Finestra di dialogo per selezione file immagine
+ * @param acceptMode Modalità finestra di dialogo (Apertura file)
+ */
 static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMode acceptMode)
 {
     static bool firstDialog = true;
@@ -399,6 +455,12 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
         dialog.setDefaultSuffix("jpg");
 }
 
+/**
+ * @brief Selezione file immagine
+ * @param fileName Nome del file selezionato
+ * @param it Iteratore alla nota SimpleNote da trasformare in ImgNote
+ * @return True se il file imamgine è stato importato e aggiunto alla nota correttamente
+ */
 bool NoteWidget::loadFile(const QString& fileName, ListaNote::Iterator& it)
 {
     QImageReader reader(fileName);
@@ -426,6 +488,9 @@ bool NoteWidget::loadFile(const QString& fileName, ListaNote::Iterator& it)
     return true;
 }
 
+/**
+ * @brief Selezione di un file immagine valido per una nota di tipo ImgNote
+ */
 void NoteWidget::imageOpen() {
     auto items = lista->selectedItems();
     ListaNote::Iterator it = static_cast<NoteListWidgetItem*>(items[0])->getNota();

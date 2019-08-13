@@ -56,8 +56,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(quit, SIGNAL(triggered()), this, SLOT(exit()));
     fileMenu->addAction(quit);
 
+    /* Provo a caricare le note dal file di default "qNote.json"
+     * In questo caso non mostro errori in caso di fallimento (potrebbe non esserci)
+     */
     load(false);
     if (list.empty()) {
+        //se non ho trovato il file di default aggiungo una nota di default
         list.push_back(SimpleNote("QNote", "Con QNote puoi organizzare le tue note, aggiungendo tag, immagini e liste di obiettivi!"));
 
         mainWidget = new NoteWidget(list, percorsoFile, this);
@@ -67,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 }
 
+//Prevengo l'uscita diretta dal programma chiudendo la finestra
 void MainWindow::closeEvent(QCloseEvent *event) {
     QWidget::closeEvent(event);
     exit();
@@ -89,9 +94,11 @@ void MainWindow::load(bool showError) {
                     ListaNote::deserializza(lettoreNote));
         list.swap(risultatoDeserializzazione);
 
+        //refresh del widget principale
         QWidget *theWidget = centralWidget();
         mainWidget = new NoteWidget(list, percorsoFile, this);
         setCentralWidget(mainWidget);
+        //rimuovo il mainwidget precedente
         theWidget->deleteLater();
         mainWidget->salvato();
     } catch (const DeserializeException& ex) {
@@ -153,6 +160,10 @@ void MainWindow::exportNote() {
     }
 }
 
+/**
+ * @brief Salvataggio rapido. Se in precedenza non è stato importato o esportato un file
+ * il salvataggio viene effettuato sul file di default "qNote.json"
+ */
 void MainWindow::save() {
     SerializzaNote serializzatore(percorsoFile);
     list.serializza(serializzatore);

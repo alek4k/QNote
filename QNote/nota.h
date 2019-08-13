@@ -9,22 +9,26 @@
 #include <QJsonObject>
 
 /**
- * @brief Rappresentazione di una nota
+ * @brief Classe base astratta che rappresenta una nota
  */
 class Nota
 {
 private:
     QString titolo;
     QString descrizione;
+    //i tag consentono di catalogare le note per argomenti/aree e vengono sfruttati anche in fase di ricerca
     QVector<QString> tag;
+    //la data serve in particolare ad ordinare le note in ordine decrescente di modifica
     QDateTime dataUltimaModifica;
 public:
     /**
      * @brief Costruisce una nuova nota
-     * @param titolo il titolo della nota
-     * @param descrizione il testo della nota
+     * @param titolo Titolo della nota
+     * @param descrizione Testo della nota
+     * @param tag Contenitore di tag della nota
+     * @param data Data di creazione della nota (default: data e ora attuali)
      */
-    Nota(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QDateTime& data = QDateTime::currentDateTime()) noexcept;
+    Nota(const QString& titolo, const QString& descrizione, const QVector<QString>& tag, const QDateTime& data = QDateTime::currentDateTime());
 
     Nota(const Nota&) = default;
 
@@ -32,23 +36,59 @@ public:
 
     virtual ~Nota() = default;
 
-    virtual Nota* clone() const noexcept = 0;
+    /**
+     * @brief clone Clona la nota in una nuova nota identica
+     * @return la copia della nota
+     */
+    virtual Nota* clone() const = 0;
 
-    QString getTitolo() const noexcept;
+    /**
+     * @brief getTitolo
+     * @return il titolo della nota
+     */
+    QString getTitolo() const;
 
-    QString getDescrizione() const noexcept;
+    /**
+     * @brief getDescrizione
+     * @return il testo della nota
+     */
+    QString getDescrizione() const;
 
-    QDateTime getDataModifica() const noexcept;
+    /**
+     * @brief getDataModifica
+     * @return la data di ultima modifica della nota
+     */
+    QDateTime getDataModifica() const;
 
+    /**
+     * @brief getTag
+     * @return il contenitore di tag della nota
+     */
     QVector<QString> getTag() const;
 
-    void setTitolo(const QString& titolo) noexcept;
+    /**
+     * @brief setTitolo Imposta il titolo della nota
+     * @param titolo Stringa da impostare come titolo della nota
+     */
+    void setTitolo(const QString& titolo);
 
-    void setDescrizione(const QString& descrizione) noexcept;
+    /**
+     * @brief setDescrizione Imposta la descrizione della nota
+     * @param descrizione Il testo da impostare come descrizione
+     */
+    void setDescrizione(const QString& descrizione);
 
-    void setDataModifica(const QDateTime& dataModifica = QDateTime::currentDateTime()) noexcept;
+    /**
+     * @brief setDataModifica Aggiornamento data modifica
+     * @param dataModifica La data di ultima modifica della nota
+     */
+    void setDataModifica(const QDateTime& dataModifica = QDateTime::currentDateTime());
 
-    void setTag(const QVector<QString>& tag) noexcept;
+    /**
+     * @brief setTag
+     * @param tag Tag da impostare come tag della nota
+     */
+    void setTag(const QVector<QString>& tag);
 };
 
 #endif // NOTA_H
