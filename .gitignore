@@ -8,6 +8,6 @@
 *moc_*
 ui_*.h
 
-build-QNote-Desktop-Debug/
-QNote/QNote\.pro\.user
-build-QNote-Desktop-Release/
+/build-QNote-Desktop-Debug
+/QNote/QNote\.pro\.user
+/build-QNote-Desktop-Release
