@@ -99,7 +99,7 @@ NoteWidget::NoteWidget(ListaNote& note, QString& percorsoFile, QWidget *parent)
     addToDoListButton->setIcon(QIcon("addToDoList.png"));
     addToDoListButton->setToolTip("Aggiungi lista di obiettivi");
 
-    addTagButton->setIcon(QIcon("tags2.png"));
+    addTagButton->setIcon(QIcon("addTag.png"));
     addTagButton->setToolTip("Aggiungi tag");
 
     barraTopLeft->addWidget(searchBar, 0, 0);
