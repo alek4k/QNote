@@ -62,10 +62,8 @@ SerializzaNote::~SerializzaNote() {
     QJsonObject serializzazione;
     serializzazione.insert("note", elementi);
 
-    // Scrivo il json nel file
     file.write(QJsonDocument(serializzazione).toJson(QJsonDocument::Indented));
 
-    // Chiudo il file
     file.close();
 }
 
@@ -111,24 +109,21 @@ void SerializzaNote::operator()(const Nota& nota) {
 DeserializzaNote::DeserializzaNote(const QString& path)
     : file(path), fileExists(QFileInfo::exists(path) && QFileInfo(path).isFile()) {
     if ((!fileExists) || (!file.open(QIODevice::ReadOnly)))
-        throw DeserializeException("Errore nella lettura del file di salvataggio");
+        throw DeserializeException("Errore nella lettura del file");
 
-    // Leggo tutto il file
+    //lettura da file
     fileContent = QString(file.readAll());
 
-    // Faccio il parsing del contenuto
     doc = QJsonDocument::fromJson(fileContent.toUtf8());
 
-    // Chiudo il file
     file.close();
 }
 
 void DeserializzaNote::operator()(ListaNote& risultato) {
-    // Se il file non esiste non ha molto senso cercare di estrarre dati da esso...
     if (!fileExists) return;
 
     if (!doc.isObject())
-        throw DeserializeException("Errore nella interpretazione del file di salvataggio: formato non valido");
+        throw DeserializeException("Formato file non valido");
 
     // Scorro tutte le note presenti nel JSON
     const auto note = doc.object()["note"].toArray();
