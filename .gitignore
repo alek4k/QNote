@@ -12,3 +12,7 @@ ui_*.h
 /build-QNote-Desktop-Release
 
 *.pro.user*
+
+/QNote/Makefile
+/QNote/QNote
+/QNote/.qmake.stash
