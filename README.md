@@ -1,6 +1,7 @@
 # QNote
 
-QNote è un’applicazione che consente di gestire delle note, catalogabili tramite tag, di diverse tipologie: note semplici, note con immagine e note con obiettivi.
+QNote è un’applicazione che consente di gestire delle note, catalogabili tramite tag, di diverse tipologie: note semplici, note con immagine e note con obiettivi.<br>
+QNote è scritta in C++ e realizzata con Qt per il corso di "Programmazione ad oggetti", 2018-2019 - Università di Padova
 
 ## Getting Started
 
