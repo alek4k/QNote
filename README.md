@@ -1,6 +1,5 @@
 # QNote
 
-Progetto C++ realizzato con Qt per il corso "Programmazione ad oggetti" 2018-2019 - Università di Padova
 QNote è un’applicazione che consente di gestire delle note, catalogabili tramite tag, di diverse tipologie: note semplici, note con immagine e note con obiettivi.
 
 ## Getting Started
@@ -15,8 +14,6 @@ Per compilare QNote è necessario eseguire i seguenti comandi all'interno della 
 qmake
 make
 ```
-
-## Usage
 
 Avviare l'applicazione con il comando
 ```bash
